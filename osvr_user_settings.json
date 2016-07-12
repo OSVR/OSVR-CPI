@@ -1,0 +1,39 @@
+{
+  "personalSettings": {
+    "gender": "male",
+    "eyes": {
+      "left": {
+        "dominant": true,
+        "pupilDistance": 32.5,
+        "correction": {
+          "distance": {
+            "spherical": 0.5,
+            "cylindrical": -1,
+            "axis": 80
+          },
+          "addNear": {
+            "spherical": 2.5
+          }
+        }
+      },
+      "right": {
+        "pupilDistance": 32.5,
+        "correction": {
+          "distance": {
+            "spherical": -3.25,
+            "cylindrical": -0.25,
+            "axis": 130
+          },
+          "addNear": {
+            "spherical": 0.5
+          }
+        }
+      }
+    },
+    "anthropometric": {
+      "standingEyeHeight": 1.80,
+      "seatedEyeHeight": 1.06,
+      "eyeToNeck": 20.32
+    }
+  }
+}

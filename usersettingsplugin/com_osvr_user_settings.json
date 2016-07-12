@@ -1,0 +1,23 @@
+{
+  "deviceVendor": "OSVR",
+  "deviceName": "User Settings Plugin",
+  "author": "Michael Lee <michael.lee@razerzone.com>",
+  "version": 1,
+  "lastModified": "2015-10-7",
+  "interfaces": {
+    "analog": {
+      "count": 3
+      }
+  },
+  "semantics": {
+    "IPD": {
+        "$target": "analog/0"
+    },
+    "StandingHeight": {
+        "$target": "analog/1"
+    },
+    "SeatedHeight": {
+      "$target": "analog/2"
+    }
+  }
+}

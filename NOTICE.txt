@@ -1,0 +1,2 @@
+OSVR-user-settings Copyright
+Copyright 2015 Razer, Inc.
