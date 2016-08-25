@@ -4,11 +4,11 @@ Issues, pull requests, and other contributions are welcomed!
 
 A few tips:
 
-## Is `OSVR-user-settings` the right repository?
+## Is `OSVR-CPI` the right repository?
 
 The OSVR system consists of a number of repositories, many of which are in the [OSVR organization on GitHub][osvr-org].
 
-The `OSVR-user-settings` repo consists of a QT application that edits and saves user settings config files for use by the OSVR server and components. It captures such settings as IPD, optical prescription values, and other anthropometric data.
+The `OSVR-CPI` repo consists of a QT application that edits and saves user settings config files for use by the OSVR server and components. It captures such settings as IPD, optical prescription values, and other anthropometric data.
 
 - If you've got an issue to report, a bug fix, or a feature addition to the windows installer: **yes**, you're in the right spot!
 - If you have an issue, bug fix, or other contribution related to the OSVR server (which comes bundled with an OSVR-Unity binary snapshot) or one of the plugins: **you're close** - see the [OSVR-Core](https://github.com/osvr/OSVR-Core) repo for the server and its bundled plugins.
