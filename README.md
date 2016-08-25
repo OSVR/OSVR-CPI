@@ -1,4 +1,4 @@
-# OSVR-user-settings
+# OSVR-CPI
 A simple QT based utility to help users set up their configuration parameters
 
 The application by default reads and writes a file called osvr_user_settings.json.
