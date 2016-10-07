@@ -252,7 +252,7 @@ void MainWindow::on_recenterButton_clicked()
 
 void MainWindow::on_GPUType_currentIndexChanged(const QString &arg1)
 {
-    QMessageBox::critical(this,tr("Alert"), "GPU Type switched from " + m_GPU_type + " to " + arg1 + ".\n");
+//    QMessageBox::critical(this,tr("Alert"), "GPU Type switched from " + m_GPU_type + " to " + arg1 + ".\n");
     m_GPU_type = arg1;
 }
 
@@ -457,7 +457,7 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand){
         }
     }else{
         if (m_verbose)
-           QMessageBox::critical(this,tr("Alert"),"Could not retrieve results from " + theCommand + ". Check your connections and try again.");
+           QMessageBox::critical(this,tr("Alert"),"Could not retrieve results from " + theCommand + ". Try reconnecting and power cycling your HMD.");
     }
     return theResult;
 }
