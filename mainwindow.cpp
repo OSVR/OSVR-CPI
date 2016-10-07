@@ -93,6 +93,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tabWidget->setCurrentIndex(0);
 
+    // Temporarily remove the USER Settings tab
+    ui->tabWidget->removeTab(3);
+
     QProcess process;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     QString programPath = "";
@@ -106,6 +109,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_aboutButton_clicked()
+{
+    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("Simple utility for helping you set up and configure your personal OSVR settings... For more information, visit www.osvr.com."), QMessageBox::Ok);
+    // loadConfigFile(QString("start.json"));
+}
+
+void MainWindow::on_exitButton_clicked()
+{
+    QApplication::quit();
+}
+
+// User setting functions-------------------------------------------------------------
 bool MainWindow::loadConfigFile(QString filename)
 {
     char* cstr;
@@ -149,17 +164,6 @@ void MainWindow::updateFormValues(){
     ui->dOdAxis->setText(QString::number(m_osvrUser.axis(OD)));
     ui->nOdAdd->setText(QString::number(m_osvrUser.addNear(OD)));
     ui->ODdominant->setChecked(m_osvrUser.dominant(OD));
-}
-
-void MainWindow::on_resetButton_clicked()
-{
-    updateFormValues();
-}
-
-void MainWindow::on_aboutButton_clicked()
-{
-    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("Simple utility for helping you set up and configure your personal OSVR settings... For more information, visit www.osvr.com."), QMessageBox::Ok);
-    // loadConfigFile(QString("start.json"));
 }
 
 void MainWindow::loadValuesFromForm(OSVRUser *oo)
@@ -224,36 +228,73 @@ void MainWindow::saveConfigFile(QString filename)
     out_file.close();
 }
 
+void MainWindow::on_resetButton_clicked()
+{
+    updateFormValues();
+}
+
 void MainWindow::on_saveButton_clicked()
 {
     loadValuesFromForm(&m_osvrUser);
     saveConfigFile(m_osvrUserConfigFilename);
 }
 
-void MainWindow::on_exitButton_clicked()
-{
-    QApplication::quit();
-}
+// SW Tab-------------------------------------------------------------
+// Recenter HMD
+// Direct mode toggles
 
-void MainWindow::on_resetYawButton_clicked()
+void MainWindow::on_recenterButton_clicked()
 {
     QProcess *process = new QProcess(this);
     QString file = "reset_yaw.bat";
     process->start(file);
 }
 
-void MainWindow::on_disableButton_clicked()
+void MainWindow::on_GPUType_currentIndexChanged(const QString &arg1)
 {
-    QProcess *process = new QProcess(this);
-    QString file = "disableOSVRDirect.bat";
-    process->start(file);
+    QMessageBox::critical(this,tr("Alert"), "GPU Type switched from " + m_GPU_type + " to " + arg1 + ".\n");
+    m_GPU_type = arg1;
 }
 
-void MainWindow::on_enableButton_clicked()
+void MainWindow::on_directModeButton_clicked()
 {
     QProcess *process = new QProcess(this);
-    QString file = "enableOSVRDirect.bat";
-    process->start(file);
+    if (m_GPU_type.contains("nVidia"))
+        process->start("enableOSVRDirectMode.exe");
+    else if (m_GPU_type.contains("AMD"))
+        process->start("enableOSVRDirectModeAMD.exe");
+    else{
+        // do nothing for now
+    }
+    return;
+}
+
+void MainWindow::on_extendedModeButton_clicked()
+{
+    QProcess *process = new QProcess(this);
+    if (m_GPU_type.contains("nVidia"))
+        process->start("disableOSVRDirectMode.exe");
+    else if (m_GPU_type.contains("AMD"))
+        process->start("disableOSVRDirectModeAMD.exe");
+    else{
+        // do nothing for now
+    }
+    return;
+}
+
+// HMD Tab-------------------------------------------------------------
+void MainWindow::on_checkFWButton_clicked()
+{
+    QMessageBox msgBox;
+
+    // get FW version
+    QString fwVersion = sendCommandWaitForResults("#?v\n");
+    if (fwVersion ==  ""){
+        fwVersion = "Error: Cannot read FW version.";
+    }
+    msgBox.setText("FW Version: " + fwVersion);
+    msgBox.exec();
+    return;
 }
 
 // FW Update button
@@ -286,7 +327,7 @@ void MainWindow::on_updateFWButton_clicked()
 
     sendCommandNoResult("#?b1948\n");
 
-    msgBox.setText("This application uses the opensource dfu-programmer which can be found here: dfu-programmer.github.io \n\nAt this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. You can find the drivers in this distribution in the dfu-prog-usb-1.2.2 folder. \n\nRight click on the device in the device manager and Update the Driver Softare...");
+    msgBox.setText("This application uses the opensource dfu-programmer which can be found here: dfu-programmer.github.io \n\nAt this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. You can find the drivers in this distribution in the dfu-prog-usb-1.2.2 folder. \n\nRight click on the device in the device manager and Update the Driver Software...");
     msgBox.exec();
 
     atmel_erase();
@@ -300,20 +341,6 @@ void MainWindow::on_updateFWButton_clicked()
     }
     msgBox.setText("FW Version: " + fwVersion);
     msgBox.exec();
-}
-
-void MainWindow::on_checkFWButton_clicked()
-{
-    QMessageBox msgBox;
-
-    // get FW version
-    QString fwVersion = sendCommandWaitForResults("#?v\n");
-    if (fwVersion ==  ""){
-        fwVersion = "Error: Cannot read FW version.";
-    }
-    msgBox.setText("FW Version: " + fwVersion);
-    msgBox.exec();
-    return;
 }
 
 void MainWindow::atmel_erase()
@@ -503,7 +530,9 @@ void MainWindow::on_rotationVectorSlider_sliderReleased()
     }
 }
 
-void MainWindow::on_disableButton_2_clicked()
+void MainWindow::on_toggleSBSButton_clicked()
 {
+    // Toggle side by side mode for 1.x HMDs
     sendCommandNoResult("#f1s\n");
 }
+

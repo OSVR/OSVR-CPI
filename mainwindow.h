@@ -37,23 +37,37 @@ public:
 
 private slots:
 
-    void saveConfigFile(QString filename);
+    void on_aboutButton_clicked();
+    void on_exitButton_clicked();
+
+    // User setting functions-------------------------------------------------------------
     bool loadConfigFile(QString filename);
     void updateFormValues(void);
     void loadValuesFromForm(OSVRUser *oo);
+    void saveConfigFile(QString filename);
 
     void on_resetButton_clicked();
     void on_saveButton_clicked();
-    void on_exitButton_clicked();
-    void on_aboutButton_clicked();
-    void on_resetYawButton_clicked();
 
-    void on_disableButton_clicked();
-    void on_enableButton_clicked();
+    // HMD Tab-------------------------------------------------------------
+     void on_checkFWButton_clicked();
+     void on_updateFWButton_clicked();
 
-    void on_updateFWButton_clicked();
-    void on_checkFWButton_clicked();
+    // SW Tab-------------------------------------------------------------
+    // Recenter HMD
+    // Direct mode toggles
+    void on_recenterButton_clicked();
+    void on_GPUType_currentIndexChanged(const QString &arg1);
+    void on_directModeButton_clicked();
+    void on_extendedModeButton_clicked();
 
+    // HDK 1.x Tab-------------------------------------------------------------
+    void on_toggleSBSButton_clicked();
+    void on_enableDisplayButton_clicked();
+    void on_persistanceSlider_valueChanged(int value);
+    void on_rotationVectorSlider_sliderReleased();
+
+    // Helper functions-------------------------------------------------------------
     QString findSerialPort(int,int);
     QSerialPort *openSerialPort(QString);
     void writeSerialData(QSerialPort *thePort, const QByteArray &);
@@ -65,20 +79,14 @@ private slots:
     void atmel_load(QString);
     void atmel_launch();
 
-
-    void on_enableDisplayButton_clicked();
-
-    void on_persistanceSlider_valueChanged(int value);
-    void on_rotationVectorSlider_sliderReleased();
-    
-    void on_disableButton_2_clicked();
-
 private:
     Ui::MainWindow *ui;
 
     bool m_verbose=false;
     QString m_osvrUserConfigFilename;
     OSVRUser m_osvrUser;
+
+    QString m_GPU_type = "nVidia";
 };
 
 #endif // MAINWINDOW_H
