@@ -111,7 +111,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_aboutButton_clicked()
 {
-    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("Simple utility for helping you set up and configure your personal OSVR settings... For more information, visit www.osvr.com."), QMessageBox::Ok);
+    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("This application is a simple utility to help you configure your personal OSVR settings. For more information, visit www.osvr.com."), QMessageBox::Ok);
     // loadConfigFile(QString("start.json"));
 }
 
@@ -483,56 +483,33 @@ void MainWindow::on_enableDisplayButton_clicked()
     sendCommandNoResult("#Hi\n");
 }
 
-void MainWindow::on_persistanceSlider_valueChanged(int value)
-{
-    /*
-        sendCommandNoResult("#sp03C0A"); // 60Hz@10%
-        sendCommandNoResult("#sp03C14"); // 60Hz@20%
-        sendCommandNoResult("#sp03C1E"); // 60Hz@30%
-        sendCommandNoResult("#sp03C28"); // 60Hz@40%
-        sendCommandNoResult("#sp03C32"); // 60Hz@50%
-        sendCommandNoResult("#sp03C3C"); // 60Hz@60%
-        sendCommandNoResult("#sp03C4B"); // 60Hz@70%
-        sendCommandNoResult("#sp03C50"); // 60Hz@80%
-        sendCommandNoResult("#sp03C5A"); // 60Hz@90%
-        sendCommandNoResult("#sp0F012"); // 240Hz@18%
-        sendCommandNoResult("#sp0F032"); // 240Hz@50%
-    */
-
-    switch (value){
-    case 0:
-            // low persistence
-        sendCommandNoResult("#sp03C0A");
-        break;
-    case 1:
-            // med persistence
-        sendCommandNoResult("#sp03C32");
-        break;
-    case 2:
-            // high persistence
-            sendCommandNoResult("#sp03C50");
-        break;
-    }
-    return;
-}
-
-void MainWindow::on_rotationVectorSlider_sliderReleased()
-{
-    switch (ui->rotationVectorSlider->value()){
-        case 0:
-            // Rotation
-            sendCommandNoResult("#sg0\n");
-            return;
-        case 1:
-            // Game rotation
-            sendCommandNoResult("#sg1\n");
-            return;
-    }
-}
-
 void MainWindow::on_toggleSBSButton_clicked()
 {
     // Toggle side by side mode for 1.x HMDs
     sendCommandNoResult("#f1s\n");
 }
 
+void MainWindow::on_screenPersistenceFull_clicked()
+{
+    sendCommandNoResult("#sp03C50");
+}
+
+void MainWindow::on_screenPersistenceMedium_clicked()
+{
+    sendCommandNoResult("#sp03C32");
+}
+
+void MainWindow::on_screenPersistenceLow_clicked()
+{
+    sendCommandNoResult("#sp03C0A");
+}
+
+void MainWindow::on_rotationModeRotation_clicked()
+{
+    sendCommandNoResult("#sg0\n");
+}
+
+void MainWindow::on_rotationModeGame_clicked()
+{
+    sendCommandNoResult("#sg1\n");
+}

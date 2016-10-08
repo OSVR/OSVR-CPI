@@ -62,10 +62,13 @@ private slots:
     void on_extendedModeButton_clicked();
 
     // HDK 1.x Tab-------------------------------------------------------------
-    void on_toggleSBSButton_clicked();
     void on_enableDisplayButton_clicked();
-    void on_persistanceSlider_valueChanged(int value);
-    void on_rotationVectorSlider_sliderReleased();
+    void on_toggleSBSButton_clicked();
+    void on_screenPersistenceFull_clicked();
+    void on_screenPersistenceMedium_clicked();
+    void on_screenPersistenceLow_clicked();
+    void on_rotationModeRotation_clicked();
+    void on_rotationModeGame_clicked();
 
     // Helper functions-------------------------------------------------------------
     QString findSerialPort(int,int);
