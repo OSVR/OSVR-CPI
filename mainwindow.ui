@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>410</width>
-    <height>575</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,17 +19,17 @@
   <property name="minimumSize">
    <size>
     <width>410</width>
-    <height>575</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>410</width>
-    <height>575</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>OSVR Control Panel Interface</string>
+   <string>HDK Control Panel Interface</string>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 8pt &quot;Arial&quot;;
@@ -51,7 +51,7 @@ font-size: 8pt;
       <x>10</x>
       <y>10</y>
       <width>381</width>
-      <height>491</height>
+      <height>371</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -59,6 +59,12 @@ font-size: 8pt;
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>8888</width>
+      <height>8888</height>
+     </size>
     </property>
     <property name="font">
      <font>
@@ -70,80 +76,11 @@ font-size: 8pt;
      </font>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
-    <widget class="QWidget" name="HDKTab">
-     <attribute name="title">
-      <string>OSVR HDK Utilities</string>
-     </attribute>
-     <widget class="QPushButton" name="updateFWButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>100</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Update Firmware</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="checkFWButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Check Firmware Version</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_34">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>351</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Display the firmware version of your OSVR HDK. Ensure that your HDK's power and USB cables are connected to the belt box.</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_33">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>130</y>
-        <width>351</width>
-        <height>101</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update your OSVR HDK's firmware. This will prompt you for a valid firmware hex file which will be used to flash the HMD. You must install the Atmel drivers prior to updating firmware. These are in the &lt;span style=&quot; font-style:italic;&quot;&gt;Program Files (x86)\OSVR\OSVR-CPI\dfu-prog-usb-1.2.2&lt;/span&gt; subdirectory.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Be careful when updating firmware! Using the wrong firmware can place your HDK in an unrecoverable state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </widget>
     <widget class="QWidget" name="SWUtilTab">
      <attribute name="title">
-      <string>Software Utilities</string>
+      <string>HDK Display Settings</string>
      </attribute>
      <widget class="QPushButton" name="recenterButton">
       <property name="geometry">
@@ -164,11 +101,11 @@ font-size: 8pt;
         <x>10</x>
         <y>40</y>
         <width>351</width>
-        <height>101</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recenter your HMD's &lt;span style=&quot; font-style:italic;&quot;&gt;forward&lt;/span&gt;. Orient your headset in the direction that you would like to be forward, then click this button.&lt;/p&gt;&lt;p&gt;Note that this setting persists only while the OSVR Server is running, and that other applications can change this setting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recenter your HMD's &lt;span style=&quot; font-style:italic;&quot;&gt;forward&lt;/span&gt;. Orient your headset in the direction that you would like to be forward, then click this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -181,9 +118,9 @@ font-size: 8pt;
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>120</y>
+        <y>90</y>
         <width>361</width>
-        <height>301</height>
+        <height>221</height>
        </rect>
       </property>
       <property name="title">
@@ -200,7 +137,7 @@ font-size: 8pt;
        </property>
        <item>
         <property name="text">
-         <string>    nVidia</string>
+         <string>    NVIDIA</string>
         </property>
        </item>
        <item>
@@ -215,7 +152,7 @@ font-size: 8pt;
          <x>10</x>
          <y>50</y>
          <width>341</width>
-         <height>21</height>
+         <height>16</height>
         </rect>
        </property>
        <property name="text">
@@ -247,11 +184,11 @@ font-size: 8pt;
          <x>10</x>
          <y>120</y>
          <width>341</width>
-         <height>41</height>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;direct-to-display&lt;/span&gt; mode. This mode is preferable if your graphics card supports it. It allows VR applications to render directly to your HMD and generally has better performance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;direct-to-display&lt;/span&gt; mode. This mode is preferable if your graphics card supports it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -279,11 +216,11 @@ font-size: 8pt;
          <x>10</x>
          <y>200</y>
          <width>341</width>
-         <height>101</height>
+         <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;extended display&lt;/span&gt; mode. This mode must be used if your graphics card does not support direct mode. It configures your HMD to appear as an additional display (i.e. monitor) within your operating system's settings. Additional configuration of your operating system's display settings may be necessary - particularly display position, scaling, and orientation - may be necessary to achieve proper rendering in your HMD.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;extended display&lt;/span&gt; mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -294,21 +231,47 @@ font-size: 8pt;
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="HDK1Xtab">
+    <widget class="QWidget" name="HDKTab">
      <attribute name="title">
-      <string>HDK 1.x</string>
+      <string>HDK Firmware Settings</string>
      </attribute>
-     <widget class="QLabel" name="label_37">
+     <widget class="QPushButton" name="updateFWButton">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>350</y>
-        <width>351</width>
-        <height>61</height>
+        <y>90</y>
+        <width>131</width>
+        <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle whether the IMU augments inertial tracking with compass recalibration. Compass recalibration reduces drift but can cause tracking disruptions when the compass is unable to clearly measure the ambient magnetic field.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>Update Firmware</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="checkFWButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>131</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Check Firmware Version</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_34">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>351</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Display the firmware version of your OSVR HDK. Ensure that your HDK is connected.</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -317,6 +280,30 @@ font-size: 8pt;
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="label_33">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>120</y>
+        <width>351</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update your OSVR HDK's firmware.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="HDK1Xtab">
+     <attribute name="title">
+      <string>HDK 1 Controls</string>
+     </attribute>
      <widget class="QLabel" name="label_40">
       <property name="geometry">
        <rect>
@@ -327,7 +314,7 @@ font-size: 8pt;
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note: These settings are applicable only to HDK 1.x hardware (e.g. 1.2, 1.3, or 1.4). They will have no effect on other HMDs.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note: These legacy settings are applicable only to HDK 1.x hardware (e.g. 1.2, 1.3, or 1.4). They will have no effect on other HMDs.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -336,109 +323,93 @@ font-size: 8pt;
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QGroupBox" name="hdk1Display">
+     <widget class="QPushButton" name="enableDisplayButton">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>50</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enable HDK Display</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>80</y>
+        <width>351</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Force the HDK display to turn on. Only necessary when the HDK display remains dark.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="toggleSBSButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>130</y>
+        <width>141</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Toggle Side-By-Side Mode</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>160</y>
+        <width>351</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Toggle side-by-side (SBS) rendering mode. Some early HDKs require this setting to render certain applications properly across both HDK displays.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="persistenceGroupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>210</y>
         <width>361</width>
-        <height>291</height>
+        <height>131</height>
        </rect>
       </property>
       <property name="title">
-       <string>HDK 1.x Display Settings</string>
+       <string>Screen Persistence</string>
       </property>
-      <widget class="QLabel" name="label_35">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>351</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Enable the HDK display. Only necessary when the HDK display remains dark.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="enableDisplayButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>111</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Enable HDK Display</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_39">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>351</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Toggle side-by-side (SBS) rendering mode. Some early HMDs require this setting to render in both eyes.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="toggleSBSButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>120</y>
-         <width>141</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Toggle Side-By-Side Mode</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_36">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>160</y>
-         <width>351</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure screen persistence. Lower persistence results in improved image quality by reducing blur and other artifacts, but also reduces luminosity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="persistenceGroup">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>210</y>
+         <y>10</y>
          <width>341</width>
          <height>71</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border:0</string>
        </property>
        <property name="title">
         <string/>
@@ -486,45 +457,22 @@ font-size: 8pt;
         </property>
        </widget>
       </widget>
-     </widget>
-     <widget class="QGroupBox" name="persistenceGroup_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>410</y>
-        <width>361</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string/>
-      </property>
-      <widget class="QRadioButton" name="rotationModeRotation">
+      <widget class="QLabel" name="label_36">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>10</y>
-         <width>91</width>
-         <height>17</height>
+         <y>80</y>
+         <width>351</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="text">
-        <string>Enabled</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure screen persistence. Lower persistence results in improved image quality by reducing blur and other artifacts, but also reduces luminosity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-      </widget>
-      <widget class="QRadioButton" name="rotationModeGame">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>151</width>
-         <height>17</height>
-        </rect>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
-       <property name="text">
-        <string>Disabled (Recommended)</string>
-       </property>
-       <property name="checked">
+       <property name="wordWrap">
         <bool>true</bool>
        </property>
       </widget>
@@ -937,12 +885,12 @@ font-size: 8pt;
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="gridLayoutWidget_5">
+   <widget class="QWidget" name="gridLayoutWidget_6">
     <property name="geometry">
      <rect>
-      <x>16</x>
-      <y>500</y>
-      <width>371</width>
+      <x>10</x>
+      <y>380</y>
+      <width>391</width>
       <height>31</height>
      </rect>
     </property>
@@ -978,6 +926,20 @@ font-size: 8pt;
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
+  <tabstop>aboutButton</tabstop>
+  <tabstop>exitButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>recenterButton</tabstop>
+  <tabstop>GPUType</tabstop>
+  <tabstop>directModeButton</tabstop>
+  <tabstop>extendedModeButton</tabstop>
+  <tabstop>checkFWButton</tabstop>
+  <tabstop>updateFWButton</tabstop>
+  <tabstop>enableDisplayButton</tabstop>
+  <tabstop>toggleSBSButton</tabstop>
+  <tabstop>screenPersistenceFull</tabstop>
+  <tabstop>screenPersistenceMedium</tabstop>
+  <tabstop>screenPersistenceLow</tabstop>
   <tabstop>gender</tabstop>
   <tabstop>standingHeight</tabstop>
   <tabstop>seatedHeight</tabstop>
@@ -994,9 +956,6 @@ font-size: 8pt;
   <tabstop>nOdAdd</tabstop>
   <tabstop>resetButton</tabstop>
   <tabstop>saveButton</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>recenterButton</tabstop>
-  <tabstop>directModeButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

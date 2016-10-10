@@ -111,7 +111,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_aboutButton_clicked()
 {
-    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("This application is a simple utility to help you configure your personal OSVR settings. For more information, visit www.osvr.com."), QMessageBox::Ok);
+    QMessageBox::information(0, QString("OSVR Control Panel Interface"), QString("This application is a lightweight utility to help you configure your personal OSVR settings. For more information, visit <a href=http://www.osvr.org>osvr.org</a>."), QMessageBox::Ok);
     // loadConfigFile(QString("start.json"));
 }
 
@@ -134,7 +134,7 @@ bool MainWindow::loadConfigFile(QString filename)
     Json::Reader reader;
     Json::Value value;
     if (!reader.parse (file_id, value)){
-         qWarning("Couldn't open save file, creating file.");
+         qWarning("Couldn't open save file; creating file.");
         // new file just has default values
         saveConfigFile(filename);
     }else{
@@ -250,16 +250,15 @@ void MainWindow::on_recenterButton_clicked()
     process->start(file);
 }
 
-void MainWindow::on_GPUType_currentIndexChanged(const QString &arg1)
+void MainWindow::on_GPUType_currentIndexChanged(const QString &gpu_type)
 {
-//    QMessageBox::critical(this,tr("Alert"), "GPU Type switched from " + m_GPU_type + " to " + arg1 + ".\n");
-    m_GPU_type = arg1;
+    m_GPU_type = gpu_type;
 }
 
 void MainWindow::on_directModeButton_clicked()
 {
     QProcess *process = new QProcess(this);
-    if (m_GPU_type.contains("nVidia"))
+    if (m_GPU_type.contains("NVIDIA"))
         process->start("enableOSVRDirectMode.exe");
     else if (m_GPU_type.contains("AMD"))
         process->start("enableOSVRDirectModeAMD.exe");
@@ -272,7 +271,7 @@ void MainWindow::on_directModeButton_clicked()
 void MainWindow::on_extendedModeButton_clicked()
 {
     QProcess *process = new QProcess(this);
-    if (m_GPU_type.contains("nVidia"))
+    if (m_GPU_type.contains("NVIDIA"))
         process->start("disableOSVRDirectMode.exe");
     else if (m_GPU_type.contains("AMD"))
         process->start("disableOSVRDirectModeAMD.exe");
@@ -285,49 +284,53 @@ void MainWindow::on_extendedModeButton_clicked()
 // HMD Tab-------------------------------------------------------------
 void MainWindow::on_checkFWButton_clicked()
 {
-    QMessageBox msgBox;
-
-    // get FW version
-    QString fwVersion = sendCommandWaitForResults("#?v\n");
-    if (fwVersion ==  ""){
-        fwVersion = "Error: Cannot read FW version.";
+    QString versions = getFirmwareVersionsString();
+    if (versions == QString::null) {
+        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
+        return;
+    } else {
+        QMessageBox::information(0, "Version Information", versions, QMessageBox::Ok);
     }
-    msgBox.setText("FW Version: " + fwVersion);
-    msgBox.exec();
-    return;
 }
 
 // FW Update button
 void MainWindow::on_updateFWButton_clicked()
 {
-    QMessageBox msgBox;
+
     QMessageBox::StandardButton reply;
-    QString portName;
     QString hexFile;
     QString fileFilter = "*.hex";
 
     // find the OSVR HDK and get current FW version
-    QString fwVersion = sendCommandWaitForResults("#?v\n");
-    if (fwVersion !=  ""){
-        reply = QMessageBox::question(this,tr("FW version"),
-                "Current FW Version: " + fwVersion + "\nDo you wish to proceed?",
+    QString firmware_versions = getFirmwareVersionsString();
+    if (firmware_versions != QString::null) {
+        reply = QMessageBox::question(this,tr("Firmware Version"),
+                "Current Firmware Version: " + firmware_versions + "\nDo you wish to proceed?",
                 QMessageBox::Yes|QMessageBox::No);
-        if (reply==QMessageBox::No)
+        if (reply == QMessageBox::No)
             return;
-    }else
+    }
+    else
+    {
+        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected as shown in the manual."), QMessageBox::Ok);
         return;
+    }
 
     // ask User for the HEX file to update with
-    hexFile = QFileDialog::getOpenFileName(this,QString("Open FW Update File"),fileFilter,0);
+    hexFile = QFileDialog::getOpenFileName(this,QString("Open Firmware Update File"),fileFilter,0);
     if (hexFile == ""){
          return; // user pressed cancel
     }
-    msgBox.setText("FW hex file: "+ hexFile);
+
+    QMessageBox msgBox;
+    msgBox.setText("Firmware hex file: " + hexFile);
+    msgBox.setWindowTitle("Firmware Update In Progress...");
     msgBox.exec();
 
     sendCommandNoResult("#?b1948\n");
 
-    msgBox.setText("This application uses the opensource dfu-programmer which can be found here: dfu-programmer.github.io \n\nAt this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. You can find the drivers in this distribution in the dfu-prog-usb-1.2.2 folder. \n\nRight click on the device in the device manager and Update the Driver Software...");
+    msgBox.setText("This application uses the open source <a href=\"dfu-programmer.github.io\">dfu-programmer project</a>.\n\nAt this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. You can find the drivers in this distribution in the dfu-prog-usb-1.2.2 folder.\n\nRight click on the device in the Device Manager and select Update Driver Software.");
+    msgBox.setWindowTitle("Firmware Update Complete!");
     msgBox.exec();
 
     atmel_erase();
@@ -335,12 +338,12 @@ void MainWindow::on_updateFWButton_clicked()
     atmel_launch();
 
     // Verify FW version
-    fwVersion = sendCommandWaitForResults("#?v\n");
-    if (fwVersion ==  ""){
-        fwVersion = "Error: Cannot read FW version.";
+    firmware_versions = getFirmwareVersionsString();
+    if (firmware_versions ==  QString::null) {
+        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
+    } else {
+        QMessageBox::information(0, QString("New Firmware Versions"), firmware_versions, QMessageBox::Ok);
     }
-    msgBox.setText("FW Version: " + fwVersion);
-    msgBox.exec();
 }
 
 void MainWindow::atmel_erase()
@@ -372,7 +375,6 @@ QString MainWindow::findSerialPort(int VID, int PID)
 {
     QString outputString = "";
 
-    const QString blankString = QObject::tr("N/A");
     QString description;
     QString manufacturer;
     QString serialNumber;
@@ -398,14 +400,15 @@ QString MainWindow::findSerialPort(int VID, int PID)
             portName = info.portName();
          }
     }
-    QMessageBox msgBox;
-    if (deviceFound){
-        msgBox.setText("COM port: "+ outputString);
-    }else{
-        msgBox.setText("Could not find device");
+
+    if (m_verbose) {
+        if (deviceFound) {
+            QMessageBox::information(0, "Device Located", "COM port: " + outputString);
+        } else {
+            QMessageBox::warning(0, "Unable To Locate Device", "Unable to find device. Ensure it is connected as shown in the manual.");
+        }
     }
-    if (m_verbose)
-        msgBox.exec();
+
     return portName;
 }
 
@@ -423,7 +426,7 @@ QSerialPort *MainWindow::openSerialPort(QString portName)
         return thePort;
     } else {
         if (m_verbose)
-            QMessageBox::critical(this,tr("Open port fail"),"Cannot open serial port " + portName + ".\n Please check your connections and try again.\n");
+            QMessageBox::critical(this,tr("Unable To Open Port"),"Unable to open serial port " + portName + ".\nPlease ensure the device is connected as shown in the manual and try again.\n");
         return NULL;
     }
 }
@@ -432,7 +435,7 @@ void MainWindow::writeSerialData(QSerialPort *thePort, const QByteArray &data)
 {
     if (thePort->write(data)== -1){
         if (m_verbose)
-            QMessageBox::critical(this,tr("Write serial port failure"),"Cannot write to serial port.\n Please check your connections and try again.\n");
+            QMessageBox::critical(this,tr("Error Writing To Serial Port"),"Unable to write to serial port.\nPlease ensure the device is connected as shown in the manual and try again.\n");
     }
     thePort->flush();
     thePort->waitForBytesWritten(5000);
@@ -457,7 +460,7 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand){
         }
     }else{
         if (m_verbose)
-           QMessageBox::critical(this,tr("Alert"),"Could not retrieve results from " + theCommand + ". Try reconnecting and power cycling your HMD.");
+           QMessageBox::critical(this,tr("Error Sending Command"),"Unable to retrieve results from command '" + theCommand + "'. Try reconnecting and power cycling your HMD.");
     }
     return theResult;
 }
@@ -477,6 +480,28 @@ void MainWindow::sendCommandNoResult(QByteArray theCommand){
     }
 }
 
+QString MainWindow::getFirmwareVersionsString() {
+    QString response = sendCommandWaitForResults("#?v\n");
+    QString result = QString::null;
+
+    if (response !=  "") {
+        response = response.replace("\r", "");
+        QStringList split = response.split("\n");
+
+        QStringList fw_version_split = split.at(1).split(" ");
+        QStringList tracker_version_split = split.at(2).split(":");
+
+        result = "<u>Firmware Version:</u> " + fw_version_split.at(1) +
+                          " (" + fw_version_split.at(3) +
+                          " " + fw_version_split.at(4) +
+                          ", " + fw_version_split.at(5) +
+                          ")<br>" +
+                          "<u>Tracker Version:</u> " +
+                          tracker_version_split.at(1);
+    }
+
+    return result;
+}
 
 void MainWindow::on_enableDisplayButton_clicked()
 {
@@ -502,14 +527,4 @@ void MainWindow::on_screenPersistenceMedium_clicked()
 void MainWindow::on_screenPersistenceLow_clicked()
 {
     sendCommandNoResult("#sp03C0A");
-}
-
-void MainWindow::on_rotationModeRotation_clicked()
-{
-    sendCommandNoResult("#sg0\n");
-}
-
-void MainWindow::on_rotationModeGame_clicked()
-{
-    sendCommandNoResult("#sg1\n");
 }

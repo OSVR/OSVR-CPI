@@ -38,10 +38,13 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 DISTFILES += \
-    resources.rc
+    resources.rc \
+    logo.ico
 
 VERSION = "0.0.1.0"
 QMAKE_TARGET_COMPANY = OSVR
 QMAKE_TARGET_PRODUCT = OSVR_CPI
 QMAKE_TARGET_DESCRIPTION = "OSVR Control Panel Interface"
-QMAKE_TARGET_COPYRIGHT = "Copyright 2016 Razer LLC"
+QMAKE_TARGET_COPYRIGHT = "Copyright 2016 OSVR and contributors"
+
+RC_FILE = resources.rc

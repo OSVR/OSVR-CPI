@@ -67,13 +67,13 @@ private slots:
     void on_screenPersistenceFull_clicked();
     void on_screenPersistenceMedium_clicked();
     void on_screenPersistenceLow_clicked();
-    void on_rotationModeRotation_clicked();
-    void on_rotationModeGame_clicked();
 
     // Helper functions-------------------------------------------------------------
     QString findSerialPort(int,int);
     QSerialPort *openSerialPort(QString);
     void writeSerialData(QSerialPort *thePort, const QByteArray &);
+
+    QString getFirmwareVersionsString();
 
     void sendCommandNoResult(QByteArray);
     QString sendCommandWaitForResults(QByteArray);
