@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <QDir>
 #include <QtSerialPort>
+#include <QDesktopServices>
 
 #include "json/json.h"
 
@@ -542,4 +543,9 @@ void MainWindow::on_screenPersistenceMedium_clicked()
 void MainWindow::on_screenPersistenceLow_clicked()
 {
     sendCommandNoResult("#sp03C0A");
+}
+
+void MainWindow::on_helpButton_clicked()
+{
+    QDesktopServices::openUrl(QUrl("http://www.osvr.org/hdk2help"));
 }

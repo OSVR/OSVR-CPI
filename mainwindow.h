@@ -36,7 +36,7 @@ public:
     ~MainWindow();
 
 private slots:
-
+    void on_helpButton_clicked();
     void on_aboutButton_clicked();
     void on_exitButton_clicked();
 
