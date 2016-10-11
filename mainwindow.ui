@@ -76,7 +76,7 @@ font-size: 8pt;
      </font>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="SWUtilTab">
      <attribute name="title">
@@ -258,7 +258,7 @@ font-size: 8pt;
        </rect>
       </property>
       <property name="text">
-       <string>Check Firmware Version</string>
+       <string>Check Firmware Versions</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_34">
