@@ -76,7 +76,7 @@ font-size: 8pt;
      </font>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="SWUtilTab">
      <attribute name="title">
@@ -240,7 +240,7 @@ font-size: 8pt;
        <rect>
         <x>10</x>
         <y>90</y>
-        <width>131</width>
+        <width>141</width>
         <height>23</height>
        </rect>
       </property>
@@ -253,7 +253,7 @@ font-size: 8pt;
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>131</width>
+        <width>141</width>
         <height>23</height>
        </rect>
       </property>
