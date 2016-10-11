@@ -296,30 +296,45 @@ void MainWindow::on_checkFWButton_clicked()
 // FW Update button
 void MainWindow::on_updateFWButton_clicked()
 {
-
-    QMessageBox::StandardButton reply;
+    // Ask user for the HEX file to update with
     QString hexFile;
-    QString fileFilter = "*.hex";
+    QFileDialog fd(this);
+    fd.setFileMode(QFileDialog::ExistingFile);
+    fd.setNameFilter(tr("Firmware Hex Files (*.hex)"));
+    fd.setDirectory(QDir::currentPath());
+    if (fd.exec())
+    {
+        QStringList selected_files = fd.selectedFiles();
+
+        // Sanity check selected files list (this should be impossible)
+        if (selected_files.length() != 1)
+            return;
+
+        hexFile = fd.selectedFiles().at(0);
+    }
+    else
+        return; // user pressed cancel
+
+    // Make absolutely sure the user actually selected a file (this should be impossible)
+    if (hexFile == "")
+         return;
 
     // find the OSVR HDK and get current FW version
     QString firmware_versions = getFirmwareVersionsString();
+    QMessageBox::StandardButton reply;
     if (firmware_versions != QString::null) {
         reply = QMessageBox::question(this,tr("Ready To Update Firmware Versions"),
-                "<b>Current Firmware Versions:</b><br>" + firmware_versions + "<br><br>Do you wish to proceed with the firmware update?",
+                                              "<b>Current Firmware Versions:</b><br>" + firmware_versions +
+                                              "<br><br><b>Firmware Hex File Selected For Update:</b><br>" + hexFile +
+                                              "<br><br>Do you wish to proceed with the firmware update?",
                 QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No)
             return;
     }
     else
     {
-        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected as shown in the manual."), QMessageBox::Ok);
+        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read current firmware version. Ensure all cables are connected as shown in the manual."), QMessageBox::Ok);
         return;
-    }
-
-    // ask User for the HEX file to update with
-    hexFile = QFileDialog::getOpenFileName(this,QString("Select Firmware Update File"),fileFilter,0);
-    if (hexFile == ""){
-         return; // user pressed cancel
     }
 
     QMessageBox msgBox;
@@ -340,7 +355,7 @@ void MainWindow::on_updateFWButton_clicked()
     // Verify FW version
     firmware_versions = getFirmwareVersionsString();
     if (firmware_versions ==  QString::null) {
-        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
+        QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read new firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
     } else {
         QMessageBox::information(0, QString("New Firmware Versions"), firmware_versions, QMessageBox::Ok);
     }
