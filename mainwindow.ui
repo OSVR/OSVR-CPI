@@ -271,7 +271,7 @@ font-size: 8pt;
        </rect>
       </property>
       <property name="text">
-       <string>Display the firmware version of your OSVR HDK. Ensure that your HDK is connected.</string>
+       <string>Display the firmware versions of your OSVR HDK. Ensure that your HDK is connected.</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -302,7 +302,7 @@ font-size: 8pt;
     </widget>
     <widget class="QWidget" name="HDK1Xtab">
      <attribute name="title">
-      <string>HDK 1 Controls</string>
+      <string>HDK 1.x Controls</string>
      </attribute>
      <widget class="QLabel" name="label_40">
       <property name="geometry">

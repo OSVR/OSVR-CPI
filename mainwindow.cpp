@@ -289,7 +289,7 @@ void MainWindow::on_checkFWButton_clicked()
         QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
         return;
     } else {
-        QMessageBox::information(0, "Version Information", versions, QMessageBox::Ok);
+        QMessageBox::information(0, "Firmware Version Information", versions, QMessageBox::Ok);
     }
 }
 
@@ -304,8 +304,8 @@ void MainWindow::on_updateFWButton_clicked()
     // find the OSVR HDK and get current FW version
     QString firmware_versions = getFirmwareVersionsString();
     if (firmware_versions != QString::null) {
-        reply = QMessageBox::question(this,tr("Firmware Version"),
-                "Current Firmware Version: " + firmware_versions + "\nDo you wish to proceed?",
+        reply = QMessageBox::question(this,tr("Ready To Update Firmware Versions"),
+                "<b>Current Firmware Versions:</b><br>" + firmware_versions + "<br><br>Do you wish to proceed with the firmware update?",
                 QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No)
             return;
@@ -317,7 +317,7 @@ void MainWindow::on_updateFWButton_clicked()
     }
 
     // ask User for the HEX file to update with
-    hexFile = QFileDialog::getOpenFileName(this,QString("Open Firmware Update File"),fileFilter,0);
+    hexFile = QFileDialog::getOpenFileName(this,QString("Select Firmware Update File"),fileFilter,0);
     if (hexFile == ""){
          return; // user pressed cancel
     }
@@ -491,12 +491,12 @@ QString MainWindow::getFirmwareVersionsString() {
         QStringList fw_version_split = split.at(1).split(" ");
         QStringList tracker_version_split = split.at(2).split(":");
 
-        result = "<u>Firmware Version:</u> " + fw_version_split.at(1) +
+        result = "<u>HMD Main Board:</u> " + fw_version_split.at(1) +
                           " (" + fw_version_split.at(3) +
                           " " + fw_version_split.at(4) +
                           ", " + fw_version_split.at(5) +
                           ")<br>" +
-                          "<u>Tracker Version:</u> " +
+                          "<u>IR LED Control Board:</u> " +
                           tracker_version_split.at(1);
     }
 
