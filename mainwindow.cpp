@@ -272,7 +272,7 @@ void MainWindow::on_directModeButton_clicked()
         break;
 
     case 2:
-        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate direct mode file in <b>" + exe + "</b>. Please reinstall.", QMessageBox::Ok);
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate executable to toggle direct mode (<b>" + exe + "</b>). Please reinstall.", QMessageBox::Ok);
         break;
     }
 }
@@ -296,7 +296,7 @@ void MainWindow::on_extendedModeButton_clicked()
         break;
 
     case 2:
-        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to locate extended mode file in <b>" + exe + "</b>. Please reinstall.", QMessageBox::Ok);
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate executable to toggle extended mode (<b>" + exe + "</b>). Please reinstall.", QMessageBox::Ok);
         break;
     }
 }
@@ -545,7 +545,7 @@ QString MainWindow::getFirmwareVersionsString() {
                           " " + fw_version_split.at(4) +
                           ", " + fw_version_split.at(5) +
                           ")<br>" +
-                          "<u>IR LED Control Board:</u> " +
+                          "<u>IMU Sensor Hub:</u> " +
                           tracker_version_split.at(1);
     }
 
