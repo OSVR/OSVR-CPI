@@ -258,28 +258,48 @@ void MainWindow::on_GPUType_currentIndexChanged(const QString &gpu_type)
 
 void MainWindow::on_directModeButton_clicked()
 {
-    QProcess *process = new QProcess(this);
+    QString path = QDir::currentPath() + m_relativeBinDir;
+
     if (m_GPU_type.contains("NVIDIA"))
-        process->start("enableOSVRDirectMode.exe");
+        path += "EnableOSVRDirectMode.exe";
     else if (m_GPU_type.contains("AMD"))
-        process->start("enableOSVRDirectModeAMD.exe");
+        path += "EnableOSVRDirectModeAMD.exe";
     else{
-        // do nothing for now
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "You must select a graphics card type of NVIDIA or AMD.", QMessageBox::Ok);
+        return;
     }
-    return;
+
+    QFileInfo exe(path);
+    if (!exe.exists()) {
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate extended mode file in <b>" + exe.filePath() + "</b>. Please reinstall.", QMessageBox::Ok);
+        return;
+    }
+
+    if (!launchAsyncProcess(exe.filePath()))
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to set extended mode. Try running <b>" + exe.filePath() + "</b> manually.", QMessageBox::Ok);
 }
 
 void MainWindow::on_extendedModeButton_clicked()
 {
-    QProcess *process = new QProcess(this);
+    QString path = QDir::currentPath() + m_relativeBinDir;
+
     if (m_GPU_type.contains("NVIDIA"))
-        process->start("disableOSVRDirectMode.exe");
+        path += "DisableOSVRDirectMode.exe";
     else if (m_GPU_type.contains("AMD"))
-        process->start("disableOSVRDirectModeAMD.exe");
+        path += "DisableOSVRDirectModeAMD.exe";
     else{
-        // do nothing for now
+        QMessageBox::critical(0, "Unable To Set Extended Mode", "You must select a graphics card type of NVIDIA or AMD.", QMessageBox::Ok);
+        return;
     }
-    return;
+
+    QFileInfo exe(path);
+    if (!exe.exists()) {
+        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to locate extended mode file in <b>" + exe.filePath() + "</b>. Please reinstall.", QMessageBox::Ok);
+        return;
+    }
+
+    if (!launchAsyncProcess(exe.filePath()))
+        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to set extended mode. Try running <b>" + exe.filePath() + "</b> manually.", QMessageBox::Ok);
 }
 
 // HMD Tab-------------------------------------------------------------
@@ -360,6 +380,11 @@ void MainWindow::on_updateFWButton_clicked()
     } else {
         QMessageBox::information(0, QString("New Firmware Versions"), firmware_versions, QMessageBox::Ok);
     }
+}
+
+bool MainWindow::launchAsyncProcess(QString path, QStringList args /*= QStringList()*/)
+{
+    return QProcess::startDetached(path, args);
 }
 
 void MainWindow::atmel_erase()

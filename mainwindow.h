@@ -68,20 +68,6 @@ private slots:
     void on_screenPersistenceMedium_clicked();
     void on_screenPersistenceLow_clicked();
 
-    // Helper functions-------------------------------------------------------------
-    QString findSerialPort(int,int);
-    QSerialPort *openSerialPort(QString);
-    void writeSerialData(QSerialPort *thePort, const QByteArray &);
-
-    QString getFirmwareVersionsString();
-
-    void sendCommandNoResult(QByteArray);
-    QString sendCommandWaitForResults(QByteArray);
-
-    void atmel_erase();
-    void atmel_load(QString);
-    void atmel_launch();
-
 private:
     Ui::MainWindow *ui;
 
@@ -89,7 +75,25 @@ private:
     QString m_osvrUserConfigFilename;
     OSVRUser m_osvrUser;
 
-    QString m_GPU_type = "nVidia";
+    QString m_GPU_type = "NVIDIA";  // this should match the default value of the GPUType QComboBox
+
+    QString m_relativeBinDir = "/../OSVR-Core/bin/";
+
+    // Helper functions-------------------------------------------------------------
+    QString findSerialPort(int,int);
+    QSerialPort *openSerialPort(QString);
+    void writeSerialData(QSerialPort *thePort, const QByteArray &);
+
+    void sendCommandNoResult(QByteArray);
+    QString sendCommandWaitForResults(QByteArray);
+
+    QString getFirmwareVersionsString();
+
+    bool launchAsyncProcess(QString path, QStringList args = QStringList());
+
+    void atmel_erase();
+    void atmel_load(QString);
+    void atmel_launch();
 };
 
 #endif // MAINWINDOW_H
