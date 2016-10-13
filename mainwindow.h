@@ -72,6 +72,7 @@ private:
     Ui::MainWindow *ui;
 
     bool m_verbose=false;
+
     QString m_osvrUserConfigFilename;
     OSVRUser m_osvrUser;
 
@@ -89,7 +90,7 @@ private:
 
     QString getFirmwareVersionsString();
 
-    bool launchAsyncProcess(QString path, QStringList args = QStringList());
+    int launchAsyncProcess(QString path, QStringList args = QStringList(), bool absolute_path = false);
 
     void atmel_erase();
     void atmel_load(QString);

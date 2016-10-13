@@ -97,7 +97,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // Temporarily remove the USER Settings tab
     ui->tabWidget->removeTab(3);
 
-    QProcess process;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     QString programPath = "";
     programPath = env.value("PROGRAMDATA","C:/ProgramData");
@@ -246,9 +245,7 @@ void MainWindow::on_saveButton_clicked()
 
 void MainWindow::on_recenterButton_clicked()
 {
-    QProcess *process = new QProcess(this);
-    QString file = "reset_yaw.bat";
-    process->start(file);
+    launchAsyncProcess("osvr_reset_yaw_RZ.exe");
 }
 
 void MainWindow::on_GPUType_currentIndexChanged(const QString &gpu_type)
@@ -258,48 +255,50 @@ void MainWindow::on_GPUType_currentIndexChanged(const QString &gpu_type)
 
 void MainWindow::on_directModeButton_clicked()
 {
-    QString path = QDir::currentPath() + m_relativeBinDir;
+    QString exe;
 
     if (m_GPU_type.contains("NVIDIA"))
-        path += "EnableOSVRDirectMode.exe";
+        exe = "EnableOSVRDirectMode.exe";
     else if (m_GPU_type.contains("AMD"))
-        path += "EnableOSVRDirectModeAMD.exe";
-    else{
+        exe = "EnableOSVRDirectModeAMD.exe";
+    else {
         QMessageBox::critical(0, "Unable To Set Direct Mode", "You must select a graphics card type of NVIDIA or AMD.", QMessageBox::Ok);
         return;
     }
 
-    QFileInfo exe(path);
-    if (!exe.exists()) {
-        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate extended mode file in <b>" + exe.filePath() + "</b>. Please reinstall.", QMessageBox::Ok);
-        return;
-    }
+    switch(launchAsyncProcess(m_relativeBinDir + "/" + exe)) {
+    case 0:
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to set direct mode. Try running <b>" + exe + "</b> manually.", QMessageBox::Ok);
+        break;
 
-    if (!launchAsyncProcess(exe.filePath()))
-        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to set extended mode. Try running <b>" + exe.filePath() + "</b> manually.", QMessageBox::Ok);
+    case 2:
+        QMessageBox::critical(0, "Unable To Set Direct Mode", "Unable to locate direct mode file in <b>" + exe + "</b>. Please reinstall.", QMessageBox::Ok);
+        break;
+    }
 }
 
 void MainWindow::on_extendedModeButton_clicked()
 {
-    QString path = QDir::currentPath() + m_relativeBinDir;
+    QString exe;
 
     if (m_GPU_type.contains("NVIDIA"))
-        path += "DisableOSVRDirectMode.exe";
+        exe = "DisableOSVRDirectMode.exe";
     else if (m_GPU_type.contains("AMD"))
-        path += "DisableOSVRDirectModeAMD.exe";
-    else{
+        exe = "DisableOSVRDirectModeAMD.exe";
+    else {
         QMessageBox::critical(0, "Unable To Set Extended Mode", "You must select a graphics card type of NVIDIA or AMD.", QMessageBox::Ok);
         return;
     }
 
-    QFileInfo exe(path);
-    if (!exe.exists()) {
-        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to locate extended mode file in <b>" + exe.filePath() + "</b>. Please reinstall.", QMessageBox::Ok);
-        return;
-    }
+    switch(launchAsyncProcess(m_relativeBinDir + "/" + exe)) {
+    case 0:
+        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to set extended mode. Try running <b>" + exe + "</b> manually.", QMessageBox::Ok);
+        break;
 
-    if (!launchAsyncProcess(exe.filePath()))
-        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to set extended mode. Try running <b>" + exe.filePath() + "</b> manually.", QMessageBox::Ok);
+    case 2:
+        QMessageBox::critical(0, "Unable To Set Extended Mode", "Unable to locate extended mode file in <b>" + exe + "</b>. Please reinstall.", QMessageBox::Ok);
+        break;
+    }
 }
 
 // HMD Tab-------------------------------------------------------------
@@ -382,32 +381,41 @@ void MainWindow::on_updateFWButton_clicked()
     }
 }
 
-bool MainWindow::launchAsyncProcess(QString path, QStringList args /*= QStringList()*/)
+int MainWindow::launchAsyncProcess(QString path, QStringList args /*= QStringList()*/, bool absolute_path /*= false*/)
 {
+    if (!absolute_path)
+        path = QDir::currentPath() + "/" + path;
+
+    QFileInfo exe(path);
+    if (!exe.exists())
+        return 2;
+
     return QProcess::startDetached(path, args);
 }
 
 void MainWindow::atmel_erase()
 {
-    QProcess *process = new QProcess(this);
-    QString file = "dfu-programmer.exe atxmega256a3bu erase";
-    process->start(file);
+    QStringList args;
+    args << "atxmega256a3bu" << "erase";
+    launchAsyncProcess("dfu-programmer.exe", args);
     QThread::sleep(3);
 }
 
 void MainWindow::atmel_load(QString fwFile)
 {
-    QProcess *process = new QProcess(this);
-    QString file = "dfu-programmer.exe atxmega256a3bu flash \"" + fwFile + "\"";
-    process->start(file);
+    fwFile = "\"" + fwFile + "\"";
+
+    QStringList args;
+    args << "atxmega256a3bu" << "flash" << fwFile;
+    launchAsyncProcess("dfu-programmer.exe", args);
     QThread::sleep(3);
 }
 
 void MainWindow::atmel_launch()
 {
-    QProcess *process = new QProcess(this);
-    QString file = "dfu-programmer.exe atxmega256a3bu launch";
-    process->start(file);
+    QStringList args;
+    args << "atxmega256a3bu" << "launch";
+    launchAsyncProcess("dfu-programmer.exe", args);
     QThread::sleep(5);
 }
 
