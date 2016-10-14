@@ -566,6 +566,7 @@ void MainWindow::atmel_launch() {
   args << "atxmega256a3bu"
        << "launch";
   launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS);
+  QThread::sleep(3);
 }
 
 // User settings --------------------------------------------------------------
