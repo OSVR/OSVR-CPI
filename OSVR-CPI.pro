@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     osvruser.cpp \
     lib_json/json_reader.cpp \
     lib_json/json_value.cpp \
-    lib_json/json_writer.cpp
+    lib_json/json_writer.cpp \
+    firmwareupdateprogressdialog.cpp
 
 HEADERS  += mainwindow.h \
     osvruser.h \
@@ -33,9 +34,11 @@ HEADERS  += mainwindow.h \
     json/writer.h \
     lib_json/json_batchallocator.h \
     lib_json/json_tool.h \
-    version.h
+    version.h \
+    firmwareupdateprogressdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    firmwareupdateprogressdialog.ui
 
 DISTFILES += \
     resources.rc \

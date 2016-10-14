@@ -19,6 +19,7 @@
 #include <string>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "firmwareupdateprogressdialog.h"
 
 #include <iostream>
 #include <fstream>
@@ -357,27 +358,40 @@ void MainWindow::on_updateFWButton_clicked()
         return;
     }
 
-    QMessageBox msgBox;
-    msgBox.setText("Firmware hex file: " + hexFile);
-    msgBox.setWindowTitle("Firmware Update In Progress...");
-    msgBox.exec();
-
     sendCommandNoResult("#?b1948\n");
 
-    msgBox.setText("This application uses the open source <a href=\"dfu-programmer.github.io\">dfu-programmer project</a>.\n\nAt this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. You can find the drivers in this distribution in the dfu-prog-usb-1.2.2 folder.\n\nRight click on the device in the Device Manager and select Update Driver Software.");
-    msgBox.setWindowTitle("Firmware Update Complete!");
-    msgBox.exec();
+    QMessageBox::information(0, QString("Bootloader Mode Initalized"),
+                                QString("This application uses the open source <a href=\"dfu-programmer.github.io\">dfu-programmer project</a>.<br><br>" \
+                                        "At this time your device should now be in ATMEL bootloader mode. If you haven't loaded the ATMEL drivers yet, you should do so now. " \
+                                        "You can find the drivers within the <i>dfu-prog-usb-1.2.2</i> folder.<br><br>" \
+                                        "Right click on the device in the Device Manager and select Update Driver Software.<br><br>" \
+                                        "Press OK to continue."));
+
+    FirmwareUpdateProgressDialog dialog;
+    dialog.show();
+    dialog.setText("Erasing existing firmware...");
 
     atmel_erase();
+
+    dialog.setText(dialog.getText() + "<b>done.</b><br>Loading new firmware...");
+
     atmel_load(hexFile);
+
+    dialog.setText(dialog.getText() + "<b>done.</b><br>Launching new firmware...");
+
     atmel_launch();
+
+    QString progress = dialog.getText();
+    dialog.close();
+
+    QMessageBox::information(0, QString("Firmware Update Complete"), progress + "<b>done.</b><br><br>Firmware update complete.");
 
     // Verify FW version
     firmware_versions = getFirmwareVersionsString();
     if (firmware_versions ==  QString::null) {
         QMessageBox::critical(0, QString("Error"), QString("Error: Cannot read new firmware version. Ensure all cables are connected according to the manual."), QMessageBox::Ok);
     } else {
-        QMessageBox::information(0, QString("New Firmware Versions"), firmware_versions, QMessageBox::Ok);
+        QMessageBox::information(0, QString("Firmware Update Complete"), "<b>New Firmware Versions:</b><br>" + firmware_versions, QMessageBox::Ok);
     }
 }
 
