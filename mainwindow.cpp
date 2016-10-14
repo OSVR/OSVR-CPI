@@ -555,8 +555,6 @@ void MainWindow::atmel_erase() {
 }
 
 void MainWindow::atmel_load(QString fwFile) {
-  fwFile = "\"" + fwFile + "\"";
-
   QStringList args;
   args << "atxmega256a3bu"
        << "flash" << fwFile;
