@@ -22,8 +22,8 @@ OSVRUser::OSVRUser() {
   mGender = "male";
   setEye(OS, true, 32.5, 0.0, 0.0, 0.0, 0.0);
   setEye(OD, false, 32.5, 0.0, 0.0, 0.0, 0.0);
-  //    setEye(&mLeft,"true",32.5,0.5,-1,80,2.5);
-  //  setEye(&mRight,"false",32.5,-3.25,-.25,130,0.5);
+  // setEye(&mLeft,"true",32.5,0.5,-1,80,2.5);
+  // setEye(&mRight,"false",32.5,-3.25,-.25,130,0.5);
   mAnthropometric.standingEyeHeight = 160;
   mAnthropometric.seatedEyeHeight = 106;
   mAnthropometric.eyeToNeck = 20.32;
@@ -32,13 +32,13 @@ OSVRUser::OSVRUser() {
 void OSVRUser::setEye(eyeSide eyeBall, bool dominant, double pupilDistance,
                       double dSpherical, double dCylindrical, double dAxis,
                       double addNear) {
-
   eyeData *eD;
 
   if (eyeBall == OD)
     eD = &mRight;
   else
     eD = &mLeft;
+
   eD->dominant = dominant;
   eD->pupilDistance = pupilDistance;
   eD->correction.spherical = dSpherical;
@@ -80,14 +80,15 @@ bool OSVRUser::dominant(eyeSide eyeBall) const {
 }
 void OSVRUser::setDominant(eyeSide eyeBall) {
   switch (eyeBall) {
-  case OS: {
+  case OS:
     mLeft.dominant = true;
     mRight.dominant = false;
-  } break;
-  case OD: {
+    break;
+
+  case OD:
     mLeft.dominant = false;
     mRight.dominant = true;
-  } break;
+    break;
   }
 }
 
@@ -96,6 +97,7 @@ double OSVRUser::pupilDistance(eyeSide eyeBall) const {
   case OS:
     return mLeft.pupilDistance;
     break;
+
   case OD:
   default:
     return mRight.pupilDistance;
@@ -107,6 +109,7 @@ void OSVRUser::setPupilDistance(eyeSide eyeBall, double ipd) {
   case OS:
     mLeft.pupilDistance = ipd;
     break;
+
   case OD:
     mRight.pupilDistance = ipd;
   }
@@ -117,6 +120,7 @@ double OSVRUser::spherical(eyeSide eyeBall) const {
   case OS:
     return mLeft.correction.spherical;
     break;
+
   case OD:
   default:
     return mRight.correction.spherical;
@@ -128,6 +132,7 @@ void OSVRUser::setSpherical(eyeSide eyeBall, double spherical) {
   case OS:
     mLeft.correction.spherical = spherical;
     break;
+
   case OD:
     mRight.correction.spherical = spherical;
   }
@@ -138,6 +143,7 @@ double OSVRUser::cylindrical(eyeSide eyeBall) const {
   case OS:
     return mLeft.correction.cylindrical;
     break;
+
   case OD:
   default:
     return mRight.correction.cylindrical;
@@ -149,6 +155,7 @@ void OSVRUser::setCylindrical(eyeSide eyeBall, double cylindrical) {
   case OS:
     mLeft.correction.cylindrical = cylindrical;
     break;
+
   case OD:
     mRight.correction.cylindrical = cylindrical;
   }
@@ -159,6 +166,7 @@ double OSVRUser::axis(eyeSide eyeBall) const {
   case OS:
     return mLeft.correction.axis;
     break;
+
   case OD:
   default:
     return mRight.correction.axis;
@@ -170,6 +178,7 @@ void OSVRUser::setAxis(eyeSide eyeBall, double axis) {
   case OS:
     mLeft.correction.axis = axis;
     break;
+
   case OD:
     mRight.correction.axis = axis;
   }
@@ -180,6 +189,7 @@ double OSVRUser::addNear(eyeSide eyeBall) const {
   case OS:
     return mLeft.addNear;
     break;
+
   case OD:
   default:
     return mRight.addNear;
@@ -191,37 +201,38 @@ void OSVRUser::setAddNear(eyeSide eyeBall, double addNear) {
   case OS:
     mLeft.addNear = addNear;
     break;
+
   case OD:
     mRight.addNear = addNear;
   }
 }
 
-void OSVRUser::readPersonal(const Json::Value qq) {
-  string gender = qq["gender"].asString();
+void OSVRUser::readPersonal(const Json::Value json) {
+  string gender = json["gender"].asString();
 
   if (gender == "Male")
     mGender = "Male";
   else
     mGender = "Female";
 
-  Json::Value anthro = qq["anthropometric"];
+  Json::Value anthro = json["anthropometric"];
   mAnthropometric.standingEyeHeight = anthro["standingEyeHeight"].asDouble();
   mAnthropometric.seatedEyeHeight = anthro["seatedEyeHeight"].asDouble();
   mAnthropometric.eyeToNeck = anthro["eyeToNeck"].asDouble();
 
   Json::Value eye;
-  eye = qq["eyes"];
+  eye = json["eyes"];
   readEye(&mLeft, eye["left"]);
   readEye(&mRight, eye["right"]);
 }
 
-void OSVRUser::readEye(eyeData *eD, const Json::Value qq) {
+void OSVRUser::readEye(eyeData *eD, const Json::Value json) {
 
-  eD->pupilDistance = qq["pupilDistance"].asDouble();
-  eD->dominant = qq["dominant"].asBool();
+  eD->pupilDistance = json["pupilDistance"].asDouble();
+  eD->dominant = json["dominant"].asBool();
 
   Json::Value correction;
-  correction = qq["correction"];
+  correction = json["correction"];
 
   Json::Value distance = correction["distance"];
   eD->correction.spherical = distance["spherical"].asDouble();

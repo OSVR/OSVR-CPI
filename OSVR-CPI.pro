@@ -44,6 +44,7 @@ DISTFILES += \
     resources.rc \
     logo.ico
 
+# Note: the version the executable gets is from version.h, not here
 VERSION = "0.0.1.0"
 QMAKE_TARGET_COMPANY = OSVR
 QMAKE_TARGET_PRODUCT = OSVR_CPI

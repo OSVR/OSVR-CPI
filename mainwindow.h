@@ -35,33 +35,26 @@ public:
   ~MainWindow();
 
 private slots:
+  /* Bottom buttons */
   void on_helpButton_clicked();
   void on_aboutButton_clicked();
   void on_exitButton_clicked();
 
-  // User setting
-  // functions-------------------------------------------------------------
-  bool loadConfigFile(QString filename);
-  void updateFormValues(void);
-  void loadValuesFromForm(OSVRUser *oo);
-  void saveConfigFile(QString filename);
-
+  /* User settings */
   void on_resetButton_clicked();
   void on_saveButton_clicked();
 
-  // HMD Tab-------------------------------------------------------------
+  /* Firmware */
   void on_checkFWButton_clicked();
   void on_updateFWButton_clicked();
 
-  // SW Tab-------------------------------------------------------------
-  // Recenter HMD
-  // Direct mode toggles
+  /* Display */
   void on_recenterButton_clicked();
   void on_GPUType_currentIndexChanged(const QString &arg1);
   void on_directModeButton_clicked();
   void on_extendedModeButton_clicked();
 
-  // HDK 1.x Tab-------------------------------------------------------------
+  /* HDK 1.x */
   void on_enableDisplayButton_clicked();
   void on_toggleSBSButton_clicked();
   void on_screenPersistenceFull_clicked();
@@ -71,18 +64,13 @@ private slots:
 private:
   Ui::MainWindow *ui;
 
-  bool m_verbose = false;
+  static const QString RELATIVE_BIN_DIR;
+  static const bool VERBOSE;
 
-  QString m_osvrUserConfigFilename;
+  QString m_osvrUserConfigFilename, m_GPUType;
   OSVRUser m_osvrUser;
 
-  QString m_GPU_type =
-      "NVIDIA"; // this should match the default value of the GPUType QComboBox
-
-  QString m_relativeBinDir = "/../OSVR-Core/bin/";
-
-  // Helper
-  // functions-------------------------------------------------------------
+  /* Serial */
   QString findSerialPort(int, int);
   QSerialPort *openSerialPort(QString);
   void writeSerialData(QSerialPort *thePort, const QByteArray &);
@@ -92,12 +80,28 @@ private:
 
   QString getFirmwareVersionsString();
 
-  int launchAsyncProcess(QString path, QStringList args = QStringList(),
-                         bool absolute_path = false);
+  /* Supplementary executables */
+  enum PathMode { E_PM_ABSOLUTE, E_PM_RELATIVE };
+  enum LaunchMode { E_LM_SYNCHRONOUS, E_LM_ASYNCHRONOUS };
+  enum LaunchResult { E_LR_MISSING,
+                      E_LR_UNABLE_TO_START,
+                      E_LR_UNABLE_TO_WAIT,
+                      E_LR_SUCCESS };
+  LaunchResult launchProcess(QString path,
+                    PathMode path_mode = E_PM_RELATIVE,
+                    QStringList args = QStringList(),
+                    LaunchMode launch_mode = E_LM_ASYNCHRONOUS);
 
+  /* ATMEL */
   void atmel_erase();
   void atmel_load(QString);
   void atmel_launch();
+
+  /* User settings */
+  bool loadConfigFile(QString filename);
+  void updateFormValues(void);
+  void loadValuesFromForm(OSVRUser *user);
+  void saveConfigFile(QString filename);
 };
 
 #endif // MAINWINDOW_H

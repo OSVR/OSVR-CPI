@@ -22,7 +22,7 @@
 
 using namespace std;
 
-enum eyeSide { OS, OD };
+enum eyeSide { OS, OD };    // OS=left, OD=right
 
 typedef struct {
   double pupilDistance;

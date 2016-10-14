@@ -75,6 +75,9 @@ font-size: 8pt;
       <bold>false</bold>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <property name="currentIndex">
      <number>0</number>
     </property>
@@ -134,6 +137,9 @@ font-size: 8pt;
          <width>111</width>
          <height>22</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <item>
         <property name="text">
@@ -409,7 +415,7 @@ font-size: 8pt;
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">border:0</string>
+        <string notr="true">border:0;</string>
        </property>
        <property name="title">
         <string/>
@@ -601,7 +607,7 @@ font-size: 8pt;
        <rect>
         <x>10</x>
         <y>140</y>
-        <width>356</width>
+        <width>403</width>
         <height>86</height>
        </rect>
       </property>
@@ -784,7 +790,7 @@ font-size: 8pt;
        <rect>
         <x>120</x>
         <y>240</y>
-        <width>102</width>
+        <width>147</width>
         <height>80</height>
        </rect>
       </property>
