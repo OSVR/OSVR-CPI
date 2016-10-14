@@ -18,14 +18,13 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-int main(int argc, char *argv[])
-{
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
+int main(int argc, char *argv[]) {
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); // DPI support
 
-    QApplication a(argc, argv);
+  QApplication a(argc, argv);
 
-    MainWindow w;
-    w.show();
+  MainWindow w;
+  w.show();
 
-    return a.exec();
+  return a.exec();
 }

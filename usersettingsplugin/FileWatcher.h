@@ -22,22 +22,21 @@
 #include "WTypes.h"
 #endif
 
-class CFileWatcher
-{
+class CFileWatcher {
 public:
-    CFileWatcher();
-    ~CFileWatcher();
+  CFileWatcher();
+  ~CFileWatcher();
 
 public:
-    long WatchFilePath(LPCTSTR szFilePath,long *changeFlag);
-	long *m_changeFlag;
+  long WatchFilePath(LPCTSTR szFilePath, long *changeFlag);
+  long *m_changeFlag;
 
 public:
-    virtual long OnFileChanged(void);
+  virtual long OnFileChanged(void);
 
 private:
-    HANDLE m_hThreadFile;
-    TCHAR m_szPath[MAX_PATH];
+  HANDLE m_hThreadFile;
+  TCHAR m_szPath[MAX_PATH];
 };
 
 #endif

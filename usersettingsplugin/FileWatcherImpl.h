@@ -17,14 +17,12 @@
 
 #include "FileWatcher.h"
 
-class CFileWatcherImpl: public CFileWatcher
-{
+class CFileWatcherImpl : public CFileWatcher {
 public:
-    CFileWatcherImpl();
-    ~CFileWatcherImpl();
+  CFileWatcherImpl();
+  ~CFileWatcherImpl();
 
 public:
-    // Implements virtual method
-    long OnFileChanged(void);
-
+  // Implements virtual method
+  long OnFileChanged(void);
 };

@@ -7,20 +7,19 @@ namespace Ui {
 class FirmwareUpdateProgressDialog;
 }
 
-class FirmwareUpdateProgressDialog : public QDialog
-{
-    Q_OBJECT
+class FirmwareUpdateProgressDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    explicit FirmwareUpdateProgressDialog(QWidget *parent = 0);
-    ~FirmwareUpdateProgressDialog();
+  explicit FirmwareUpdateProgressDialog(QWidget *parent = 0);
+  ~FirmwareUpdateProgressDialog();
 
-    void setText(QString text);
-    QString getText();
+  void setText(QString text);
+  QString getText();
 
 private:
-    Ui::FirmwareUpdateProgressDialog *ui;
-    QString m_text = QString("");
+  Ui::FirmwareUpdateProgressDialog *ui;
+  QString m_text = QString("");
 };
 
 #endif // FIRMWAREUPDATEPROGRESSDIALOG_H

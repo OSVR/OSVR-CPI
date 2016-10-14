@@ -27,74 +27,77 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class MainWindow : public QMainWindow {
+  Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+  explicit MainWindow(QWidget *parent = 0);
+  ~MainWindow();
 
 private slots:
-    void on_helpButton_clicked();
-    void on_aboutButton_clicked();
-    void on_exitButton_clicked();
+  void on_helpButton_clicked();
+  void on_aboutButton_clicked();
+  void on_exitButton_clicked();
 
-    // User setting functions-------------------------------------------------------------
-    bool loadConfigFile(QString filename);
-    void updateFormValues(void);
-    void loadValuesFromForm(OSVRUser *oo);
-    void saveConfigFile(QString filename);
+  // User setting
+  // functions-------------------------------------------------------------
+  bool loadConfigFile(QString filename);
+  void updateFormValues(void);
+  void loadValuesFromForm(OSVRUser *oo);
+  void saveConfigFile(QString filename);
 
-    void on_resetButton_clicked();
-    void on_saveButton_clicked();
+  void on_resetButton_clicked();
+  void on_saveButton_clicked();
 
-    // HMD Tab-------------------------------------------------------------
-     void on_checkFWButton_clicked();
-     void on_updateFWButton_clicked();
+  // HMD Tab-------------------------------------------------------------
+  void on_checkFWButton_clicked();
+  void on_updateFWButton_clicked();
 
-    // SW Tab-------------------------------------------------------------
-    // Recenter HMD
-    // Direct mode toggles
-    void on_recenterButton_clicked();
-    void on_GPUType_currentIndexChanged(const QString &arg1);
-    void on_directModeButton_clicked();
-    void on_extendedModeButton_clicked();
+  // SW Tab-------------------------------------------------------------
+  // Recenter HMD
+  // Direct mode toggles
+  void on_recenterButton_clicked();
+  void on_GPUType_currentIndexChanged(const QString &arg1);
+  void on_directModeButton_clicked();
+  void on_extendedModeButton_clicked();
 
-    // HDK 1.x Tab-------------------------------------------------------------
-    void on_enableDisplayButton_clicked();
-    void on_toggleSBSButton_clicked();
-    void on_screenPersistenceFull_clicked();
-    void on_screenPersistenceMedium_clicked();
-    void on_screenPersistenceLow_clicked();
+  // HDK 1.x Tab-------------------------------------------------------------
+  void on_enableDisplayButton_clicked();
+  void on_toggleSBSButton_clicked();
+  void on_screenPersistenceFull_clicked();
+  void on_screenPersistenceMedium_clicked();
+  void on_screenPersistenceLow_clicked();
 
 private:
-    Ui::MainWindow *ui;
+  Ui::MainWindow *ui;
 
-    bool m_verbose=false;
+  bool m_verbose = false;
 
-    QString m_osvrUserConfigFilename;
-    OSVRUser m_osvrUser;
+  QString m_osvrUserConfigFilename;
+  OSVRUser m_osvrUser;
 
-    QString m_GPU_type = "NVIDIA";  // this should match the default value of the GPUType QComboBox
+  QString m_GPU_type =
+      "NVIDIA"; // this should match the default value of the GPUType QComboBox
 
-    QString m_relativeBinDir = "/../OSVR-Core/bin/";
+  QString m_relativeBinDir = "/../OSVR-Core/bin/";
 
-    // Helper functions-------------------------------------------------------------
-    QString findSerialPort(int,int);
-    QSerialPort *openSerialPort(QString);
-    void writeSerialData(QSerialPort *thePort, const QByteArray &);
+  // Helper
+  // functions-------------------------------------------------------------
+  QString findSerialPort(int, int);
+  QSerialPort *openSerialPort(QString);
+  void writeSerialData(QSerialPort *thePort, const QByteArray &);
 
-    void sendCommandNoResult(QByteArray);
-    QString sendCommandWaitForResults(QByteArray);
+  void sendCommandNoResult(QByteArray);
+  QString sendCommandWaitForResults(QByteArray);
 
-    QString getFirmwareVersionsString();
+  QString getFirmwareVersionsString();
 
-    int launchAsyncProcess(QString path, QStringList args = QStringList(), bool absolute_path = false);
+  int launchAsyncProcess(QString path, QStringList args = QStringList(),
+                         bool absolute_path = false);
 
-    void atmel_erase();
-    void atmel_load(QString);
-    void atmel_launch();
+  void atmel_erase();
+  void atmel_load(QString);
+  void atmel_launch();
 };
 
 #endif // MAINWINDOW_H
