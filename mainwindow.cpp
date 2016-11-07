@@ -106,6 +106,8 @@ MainWindow::MainWindow(QWidget *parent)
   m_osvrUserConfigFilename =
       QString(programPath + "/OSVR/osvr_user_settings.json");
   loadConfigFile(m_osvrUserConfigFilename);
+
+  detectGPUType();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -566,6 +568,33 @@ void MainWindow::atmel_launch() {
        << "launch";
   launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS);
   QThread::sleep(3);
+}
+
+// GPU Detection --------------------------------------------------------------
+
+void MainWindow::detectGPUType() {
+    QProcess *process = new QProcess(this);
+    connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
+    process->start("GPUTypeDetector.exe");
+
+    if (!process->waitForStarted())
+        return;
+    if (!process->waitForFinished())
+        return;
+
+    switch((GPUType)process->exitCode()) {
+    case E_GPUTYPE_NVIDIA:
+        ui->GPUType->setCurrentIndex(ui->GPUType->findText("NVIDIA", Qt::MatchContains));
+        return;
+
+    case E_GPUTYPE_AMD:
+        ui->GPUType->setCurrentIndex(ui->GPUType->findText("AMD", Qt::MatchContains));
+        return;
+
+    case E_GPUTYPE_UNKNOWN:
+    case E_GPUTYPE_ERROR:
+        break;
+    }
 }
 
 // User settings --------------------------------------------------------------

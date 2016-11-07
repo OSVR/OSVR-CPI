@@ -97,6 +97,10 @@ private:
   void atmel_load(QString);
   void atmel_launch();
 
+  /* GPU Detection */
+  void detectGPUType();
+  enum GPUType { E_GPUTYPE_ERROR = -1, E_GPUTYPE_NVIDIA = 1, E_GPUTYPE_AMD = 2, E_GPUTYPE_UNKNOWN = -2 };
+
   /* User settings */
   bool loadConfigFile(QString filename);
   void updateFormValues(void);
