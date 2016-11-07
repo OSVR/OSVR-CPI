@@ -27,7 +27,6 @@
 #include <iostream>
 
 #include <QDesktopServices>
-#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QJsonArray>
@@ -162,7 +161,7 @@ void MainWindow::on_updateFWButton_clicked() {
   QFileDialog fd(this);
   fd.setFileMode(QFileDialog::ExistingFile);
   fd.setNameFilter(tr("Firmware Hex Files (*.hex)"));
-  fd.setDirectory(QDir::currentPath());
+  fd.setDirectory(QCoreApplication::applicationDirPath());
   if (fd.exec()) {
     QStringList selected_files = fd.selectedFiles();
 
@@ -519,7 +518,7 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
                               QStringList args /*=QStringList()*/,
                               LaunchMode launch_mode /*=E_ASYNCHRONOUS*/) {
   if (path_mode == E_PM_RELATIVE)
-    path = QDir::currentPath() + "/" + path;
+    path = QCoreApplication::applicationDirPath() + "/" + path;
 
   QFileInfo exe(path);
   if (!exe.exists())
