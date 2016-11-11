@@ -79,6 +79,7 @@ private:
   QString sendCommandWaitForResults(QByteArray);
 
   QString getFirmwareVersionsString();
+  void showFirmwareVersionError();
 
   /* Supplementary executables */
   enum PathMode { E_PM_ABSOLUTE, E_PM_RELATIVE };

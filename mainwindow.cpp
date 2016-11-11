@@ -144,12 +144,7 @@ void MainWindow::on_saveButton_clicked() {
 void MainWindow::on_checkFWButton_clicked() {
   QString versions = getFirmwareVersionsString();
   if (versions == QString::null) {
-    QMessageBox::critical(
-        0, QString("Error"),
-        QString("Error: Cannot read firmware version. Ensure all cables are "
-                "connected according to the manual."),
-        QMessageBox::Ok);
-    return;
+    showFirmwareVersionError();
   } else {
     QMessageBox::information(0, "Firmware Version Information", versions,
                              QMessageBox::Ok);
@@ -194,11 +189,7 @@ void MainWindow::on_updateFWButton_clicked() {
     if (reply == QMessageBox::No)
       return;
   } else {
-    QMessageBox::critical(
-        0, QString("Error"),
-        QString("Error: Cannot read current firmware version. Ensure all "
-                "cables are connected as shown in the manual."),
-        QMessageBox::Ok);
+    showFirmwareVersionError();
     return;
   }
 
@@ -243,11 +234,7 @@ void MainWindow::on_updateFWButton_clicked() {
   // Verify FW version
   firmware_versions = getFirmwareVersionsString();
   if (firmware_versions == QString::null) {
-    QMessageBox::critical(
-        0, QString("Error"),
-        QString("Error: Cannot read new firmware version. Ensure all cables "
-                "are connected according to the manual."),
-        QMessageBox::Ok);
+    showFirmwareVersionError();
   } else {
     QMessageBox::information(0, QString("Firmware Update Complete"),
                              "<b>New Firmware Versions:</b><br>" +
@@ -500,9 +487,16 @@ QString MainWindow::getFirmwareVersionsString() {
   if (response != "") {
     response = response.replace("\r", "");
     QStringList split = response.split("\n");
+    if (split.length() != 4)
+        return QString::null;
 
     QStringList fw_version_split = split.at(1).split(" ");
+    if (fw_version_split.length() != 6)
+        return QString::null;
+
     QStringList tracker_version_split = split.at(2).split(":");
+    if (tracker_version_split.length() != 2)
+        return QString::null;
 
     result = "<u>HMD Main Board:</u> " + fw_version_split.at(1) + " (" +
              fw_version_split.at(3) + " " + fw_version_split.at(4) + ", " +
@@ -511,6 +505,15 @@ QString MainWindow::getFirmwareVersionsString() {
   }
 
   return result;
+}
+
+void MainWindow::showFirmwareVersionError()
+{
+    QMessageBox::critical(
+        0, QString("Error"),
+        QString("Error: Cannot read firmware version. Ensure all cables are "
+                "connected according to the manual."),
+        QMessageBox::Ok);
 }
 
 // Supplementary executables --------------------------------------------------
