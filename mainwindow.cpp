@@ -407,21 +407,30 @@ QString MainWindow::findSerialPort(int VID, int PID) {
 
 QSerialPort *MainWindow::openSerialPort(QString portName) {
   QSerialPort *thePort = new QSerialPort(this);
-
   thePort->setPortName(portName);
-  thePort->setBaudRate(QSerialPort::Baud57600);
-  thePort->setDataBits(QSerialPort::Data8);
-  thePort->setParity(QSerialPort::NoParity);
-  thePort->setStopBits(QSerialPort::OneStop);
-  thePort->setFlowControl(QSerialPort::NoFlowControl);
-  if (thePort->open(QIODevice::ReadWrite)) {
+
+  bool init_error = false;
+  if (!thePort->setBaudRate(QSerialPort::Baud57600))
+    init_error = true;
+  if (thePort->error() != QSerialPort::NoError)
+    init_error = true;
+
+  if (!init_error && thePort->open(QIODevice::ReadWrite)) {
+    if (thePort->baudRate() != QSerialPort::Baud57600) {
+      if (VERBOSE)
+        QMessageBox::warning(this, tr("Warning While Opening Port"),
+                                      "When opening the serial port " + portName +
+                                      ", the requested Baud setting of 57600 was not set.\n");
+      return NULL;
+    }
+
     return thePort;
   } else {
     if (VERBOSE)
       QMessageBox::critical(this, tr("Unable To Open Port"),
-                            "Unable to open serial port " + portName +
-                                ".\nPlease ensure the device is connected as "
-                                "shown in the manual and try again.\n");
+                                     "Unable to open serial port " + portName +
+                                     ".\nPlease ensure the device is connected as "
+                                     "shown in the manual and try again.\n");
     return NULL;
   }
 }
