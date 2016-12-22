@@ -178,7 +178,8 @@ void MainWindow::on_updateFWButton_clicked() {
   // find the OSVR HDK and get current FW version
   QString firmware_versions = getFirmwareVersionsString();
   QMessageBox::StandardButton reply;
-  if (firmware_versions != QString::null) {
+
+  if (firmware_versions != QString::null && false) {
     reply = QMessageBox::question(
         this, tr("Ready To Update Firmware Versions"),
         "<b>Current Firmware Versions:</b><br>" + firmware_versions +
@@ -186,12 +187,22 @@ void MainWindow::on_updateFWButton_clicked() {
             hexFile +
             "<br><br>Do you wish to proceed with the firmware update?",
         QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::No)
-      return;
   } else {
-    showFirmwareVersionError();
-    return;
+      reply = QMessageBox::question(
+          this, tr("Ready To Update Firmware Versions"),
+          "<b>Warning:</b> Your current firmware version cannot be detected. "
+              "This is a known issue with certain recent firmware versions "
+              "and will not prevent you from updating your firmware. This also "
+              "occurs when the HDK is not connected correctly, so please ensure that "
+              "your HDK is connected according to the manual before proceeding."
+              "<br><br><b>Firmware Hex File Selected For Update:</b><br>" +
+              hexFile +
+              "<br><br>Do you wish to proceed with the firmware update?",
+          QMessageBox::Yes | QMessageBox::No);
   }
+
+  if (reply == QMessageBox::No)
+    return;
 
   sendCommandNoResult("#?b1948\n");
 
@@ -539,7 +550,8 @@ void MainWindow::showFirmwareVersionError()
 {
     QMessageBox::critical(
         0, QString("Error"),
-        QString("Error: Cannot read firmware version. Ensure all cables are "
+        QString("Cannot read firmware version. This is a known issue "
+                "with certain recent firmware versions. Ensure all cables are "
                 "connected according to the manual."),
         QMessageBox::Ok);
 }
