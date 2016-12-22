@@ -39,7 +39,7 @@
 // Constants ------------------------------------------------------------------
 
 const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
-const bool MainWindow::VERBOSE = false;
+const bool MainWindow::DEBUG_VERBOSE = false;
 
 // Helper class for validating numerical input --------------------------------
 
@@ -391,7 +391,7 @@ QString MainWindow::findSerialPort(int VID, int PID) {
     }
   }
 
-  if (VERBOSE) {
+  if (DEBUG_VERBOSE) {
     if (deviceFound) {
       QMessageBox::information(0, "Device Located",
                                "COM port: " + outputString);
@@ -417,7 +417,7 @@ QSerialPort *MainWindow::openSerialPort(QString portName) {
 
   if (!init_error && thePort->open(QIODevice::ReadWrite)) {
     if (thePort->baudRate() != QSerialPort::Baud57600) {
-      if (VERBOSE)
+      if (DEBUG_VERBOSE)
         QMessageBox::warning(this, tr("Warning While Opening Port"),
                                       "When opening the serial port " + portName +
                                       ", the requested Baud setting of 57600 was not set.\n");
@@ -426,7 +426,7 @@ QSerialPort *MainWindow::openSerialPort(QString portName) {
 
     return thePort;
   } else {
-    if (VERBOSE)
+    if (DEBUG_VERBOSE)
       QMessageBox::critical(this, tr("Unable To Open Port"),
                                      "Unable to open serial port " + portName +
                                      ".\nPlease ensure the device is connected as "
@@ -437,7 +437,7 @@ QSerialPort *MainWindow::openSerialPort(QString portName) {
 
 void MainWindow::writeSerialData(QSerialPort *thePort, const QByteArray &data) {
   if (thePort->write(data) == -1) {
-    if (VERBOSE)
+    if (DEBUG_VERBOSE)
       QMessageBox::critical(this, tr("Error Writing To Serial Port"),
                             "Unable to write to serial port.\nPlease ensure "
                             "the device is connected as shown in the manual "
@@ -465,7 +465,7 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
       thePort->close();
     }
   } else {
-    if (VERBOSE)
+    if (DEBUG_VERBOSE)
       QMessageBox::critical(
           this, tr("Error Sending Command"),
           "Unable to retrieve results from command '" + theCommand +

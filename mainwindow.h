@@ -65,7 +65,7 @@ private:
   Ui::MainWindow *ui;
 
   static const QString RELATIVE_BIN_DIR;
-  static const bool VERBOSE;
+  static const bool DEBUG_VERBOSE;
 
   QString m_osvrUserConfigFilename, m_GPUType;
   OSVRUser m_osvrUser;
