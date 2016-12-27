@@ -151,6 +151,17 @@ void MainWindow::on_checkFWButton_clicked() {
   }
 }
 
+void MainWindow::showFirmwareVersionError()
+{
+    QMessageBox::critical(
+        0, QString("Error"),
+        QString("Unable to read firmware version. Please ensure that your "
+          "HDK is properly connected and try again. If the problem "
+          "persists, refer to the online documentation for further "
+          "information."),
+        QMessageBox::Ok);
+}
+
 // FW Update button
 void MainWindow::on_updateFWButton_clicked() {
   // Ask user for the HEX file to update with
@@ -191,10 +202,10 @@ void MainWindow::on_updateFWButton_clicked() {
       reply = QMessageBox::question(
           this, tr("Ready To Update Firmware Versions"),
           "<b>Warning:</b> Your current firmware version cannot be detected. "
-              "This is a known issue with certain recent firmware versions "
-              "and will not prevent you from updating your firmware. This also "
-              "occurs when the HDK is not connected correctly, so please ensure that "
-              "your HDK is connected according to the manual before proceeding."
+              "This will not prevent you from updating your firmware. See "
+              "online documentation for details."
+              "<br><br>Please ensure that your HDK is connected according to "
+              "the manual before proceeding."
               "<br><br><b>Firmware Hex File Selected For Update:</b><br>" +
               hexFile +
               "<br><br>Do you wish to proceed with the firmware update?",
@@ -544,16 +555,6 @@ QString MainWindow::getFirmwareVersionsString() {
   }
 
   return result;
-}
-
-void MainWindow::showFirmwareVersionError()
-{
-    QMessageBox::critical(
-        0, QString("Error"),
-        QString("Cannot read firmware version. This is a known issue "
-                "with certain recent firmware versions. Ensure all cables are "
-                "connected according to the manual."),
-        QMessageBox::Ok);
 }
 
 // Supplementary executables --------------------------------------------------
