@@ -190,7 +190,7 @@ void MainWindow::on_updateFWButton_clicked() {
   QString firmware_versions = getFirmwareVersionsString();
   QMessageBox::StandardButton reply;
 
-  if (firmware_versions != QString::null && false) {
+  if (firmware_versions != QString::null) {
     reply = QMessageBox::question(
         this, tr("Ready To Update Firmware Versions"),
         "<b>Current Firmware Versions:</b><br>" + firmware_versions +
