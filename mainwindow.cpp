@@ -290,7 +290,7 @@ void MainWindow::on_directModeButton_clicked() {
     return;
   }
 
-  LaunchResult launch_result = launchProcess(RELATIVE_BIN_DIR + "/" + exe);
+  LaunchResult launch_result = launchProcess(exe);
   switch (launch_result) {
   case E_LR_MISSING:
       QMessageBox::critical(
@@ -328,7 +328,7 @@ void MainWindow::on_extendedModeButton_clicked() {
       return;
     }
 
-    LaunchResult launch_result = launchProcess(RELATIVE_BIN_DIR + "/" + exe);
+    LaunchResult launch_result = launchProcess(exe);
     switch (launch_result) {
     case E_LR_MISSING:
         QMessageBox::critical(
