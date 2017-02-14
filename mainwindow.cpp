@@ -513,45 +513,77 @@ void MainWindow::sendCommandNoResult(QByteArray theCommand) {
 
 QString MainWindow::getFirmwareVersionsString() {
   QString response = sendCommandWaitForResults("#?v\n");
-  QString result = QString::null;
+  QString result = "<u>HMD Main Board:</u> ";
 
   if (response != "") {
     response = response.replace("\r", "");
     QStringList split = response.split("\n", QString::SplitBehavior::SkipEmptyParts);
+
     /*
-     * split should look something like this:
-     * 0='#?v'
-     * 1='Version 1.98  Nov  8 2016'
-     * 2='Tracker:1.10.1.472'
+     * split should look like one of these (or a newer version):
+     *
+     * 0: '#?v'
+     * 1: 'Version 1.98  Nov  8 2016'
+     * 2: 'Tracker:1.10.1.472'
+     *
+     * Note format change with 1.99 and beyond:
+     * 0: '#?v'
+     * 1: 'Version 1.99 (RELEASE) Nov 28 2016'
+     * 2: 'Tracker:1.10.1.472'
      */
     if (split.length() != 3)
         return QString::null;
 
     QStringList fw_version_split = split.at(1).split(" ", QString::SplitBehavior::SkipEmptyParts);
     /*
-     * fw_version_split should look something like this:
-     * 0='Version'
-     * 1='1.98'
-     * 2='Nov'
-     * 3='8'
-     * 4='2016'
+     * fw_version_split should look like one of these (or a newer version):
+     *
+     * 0: 'Version'
+     * 1: '1.98'
+     * 2: 'Nov'
+     * 3: '8'
+     * 4: '2016'
+     *
+     * Note format change with 1.99 and beyond:
+     * 0: 'Version'
+     * 1: '1.99'
+     * 2: '(RELEASE)'
+     * 3: 'Nov'
+     * 4: '28'
+     * 5: '2016'
      */
-    if (fw_version_split.length() != 5)
+
+    switch (fw_version_split.length())
+    {
+    case 5:
+        result += fw_version_split.at(1) + " (" +
+                  fw_version_split.at(2) + " " +
+                  fw_version_split.at(3) + ", " +
+                  fw_version_split.at(4) + ")<br>";
+        break;
+
+    case 6:
+        result += fw_version_split.at(1) + " " +
+                  fw_version_split.at(2) + " (" +
+                  fw_version_split.at(3) + " " +
+                  fw_version_split.at(4) + ", " +
+                  fw_version_split.at(5) + ")<br>";
+        break;
+
+    default:
         return QString::null;
+    }
 
     QStringList tracker_version_split = split.at(2).split(":");
     /*
-     * tracker_version_split should look something like this:
+     * tracker_version_split should look like this (or a newer version):
      * 0='Tracker'
      * 1='1.10.1.472'
      */
     if (tracker_version_split.length() != 2)
         return QString::null;
 
-    result = "<u>HMD Main Board:</u> " + fw_version_split.at(1) + " (" +
-             fw_version_split.at(2) + " " + fw_version_split.at(3) + ", " +
-             fw_version_split.at(4) + ")<br>" + "<u>IMU Sensor Hub:</u> " +
-             tracker_version_split.at(1);
+    result += "<u>IMU Sensor Hub:</u> " + tracker_version_split.at(1);
   }
 
   return result;
