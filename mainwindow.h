@@ -20,6 +20,7 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
+#include <QProcess>
 
 #include "osvruser.h"
 
@@ -77,13 +78,14 @@ private:
 
   void sendCommandNoResult(QByteArray);
   QString sendCommandWaitForResults(QByteArray);
+  void portKnock(QString portName);
 
   QString getFirmwareVersionsString();
   void showFirmwareVersionError();
 
   /* Supplementary executables */
   enum PathMode { E_PM_ABSOLUTE, E_PM_RELATIVE };
-  enum LaunchMode { E_LM_SYNCHRONOUS, E_LM_ASYNCHRONOUS };
+  enum LaunchMode { E_LM_SYNCHRONOUS, E_LM_ASYNCHRONOUS, E_LM_KNOCK };
   enum LaunchResult { E_LR_MISSING,
                       E_LR_UNABLE_TO_START,
                       E_LR_UNABLE_TO_WAIT,

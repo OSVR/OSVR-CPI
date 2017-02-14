@@ -33,7 +33,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
-#include <QProcess>
 #include <QtSerialPort>
 
 // Constants ------------------------------------------------------------------
@@ -477,7 +476,13 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
 
   // find the OSVR HDK and get current FW version
   portName = findSerialPort(0x1532, 0x0B00);
+
+  // TODO: !
+  cout << "portname=" << portName.toUtf8().constData() << endl;
+
   if (portName != "Not found") {
+    portKnock(portName);
+
     thePort = openSerialPort(portName);
     if (thePort) {
       writeSerialData(thePort, theCommand);
@@ -511,80 +516,89 @@ void MainWindow::sendCommandNoResult(QByteArray theCommand) {
   }
 }
 
+void MainWindow::portKnock(QString portName) {
+    QStringList args;
+    args << "-serial" << portName;
+    args << portName;
+    launchProcess("putty.exe", E_PM_RELATIVE, args, E_LM_KNOCK);
+    QThread::msleep(100);   // sleep for long enough to ensure that serial port has been released by PuTTY
+}
+
 QString MainWindow::getFirmwareVersionsString() {
   QString response = sendCommandWaitForResults("#?v\n");
   QString result = "<u>HMD Main Board:</u> ";
 
-  if (response != "") {
-    response = response.replace("\r", "");
-    QStringList split = response.split("\n", QString::SplitBehavior::SkipEmptyParts);
+  if (response == "")
+      return QString::null;
 
-    /*
-     * split should look like one of these (or a newer version):
-     *
-     * 0: '#?v'
-     * 1: 'Version 1.98  Nov  8 2016'
-     * 2: 'Tracker:1.10.1.472'
-     *
-     * Note format change with 1.99 and beyond:
-     * 0: '#?v'
-     * 1: 'Version 1.99 (RELEASE) Nov 28 2016'
-     * 2: 'Tracker:1.10.1.472'
-     */
-    if (split.length() != 3)
-        return QString::null;
+  response = response.replace("\r", "");
+  QStringList split = response.split("\n", QString::SplitBehavior::SkipEmptyParts);
 
-    QStringList fw_version_split = split.at(1).split(" ", QString::SplitBehavior::SkipEmptyParts);
-    /*
-     * fw_version_split should look like one of these (or a newer version):
-     *
-     * 0: 'Version'
-     * 1: '1.98'
-     * 2: 'Nov'
-     * 3: '8'
-     * 4: '2016'
-     *
-     * Note format change with 1.99 and beyond:
-     * 0: 'Version'
-     * 1: '1.99'
-     * 2: '(RELEASE)'
-     * 3: 'Nov'
-     * 4: '28'
-     * 5: '2016'
-     */
+  /*
+   * split should look like one of these (or a newer version):
+   *
+   * 0: '#?v'
+   * 1: 'Version 1.98  Nov  8 2016'
+   * 2: 'Tracker:1.10.1.472'
+   *
+   * Note format change with 1.99 and beyond:
+   * 0: '#?v'
+   * 1: 'Version 1.99 (RELEASE) Nov 28 2016'
+   * 2: 'Tracker:1.10.1.472'
+   */
+  if (split.length() != 3)
+      return QString::null;
 
-    switch (fw_version_split.length())
-    {
-    case 5:
-        result += fw_version_split.at(1) + " (" +
-                  fw_version_split.at(2) + " " +
-                  fw_version_split.at(3) + ", " +
-                  fw_version_split.at(4) + ")<br>";
-        break;
+  QStringList fw_version_split = split.at(1).split(" ", QString::SplitBehavior::SkipEmptyParts);
+  /*
+   * fw_version_split should look like one of these (or a newer version):
+   *
+   * 0: 'Version'
+   * 1: '1.98'
+   * 2: 'Nov'
+   * 3: '8'
+   * 4: '2016'
+   *
+   * Note format change with 1.99 and beyond:
+   * 0: 'Version'
+   * 1: '1.99'
+   * 2: '(RELEASE)'
+   * 3: 'Nov'
+   * 4: '28'
+   * 5: '2016'
+   */
 
-    case 6:
-        result += fw_version_split.at(1) + " " +
-                  fw_version_split.at(2) + " (" +
-                  fw_version_split.at(3) + " " +
-                  fw_version_split.at(4) + ", " +
-                  fw_version_split.at(5) + ")<br>";
-        break;
+  switch (fw_version_split.length())
+  {
+  case 5:
+      result += fw_version_split.at(1) + " (" +
+              fw_version_split.at(2) + " " +
+              fw_version_split.at(3) + ", " +
+              fw_version_split.at(4) + ")<br>";
+      break;
 
-    default:
-        return QString::null;
-    }
+  case 6:
+      result += fw_version_split.at(1) + " " +
+              fw_version_split.at(2) + " (" +
+              fw_version_split.at(3) + " " +
+              fw_version_split.at(4) + ", " +
+              fw_version_split.at(5) + ")<br>";
+      break;
 
-    QStringList tracker_version_split = split.at(2).split(":");
-    /*
-     * tracker_version_split should look like this (or a newer version):
-     * 0='Tracker'
-     * 1='1.10.1.472'
-     */
-    if (tracker_version_split.length() != 2)
-        return QString::null;
-
-    result += "<u>IMU Sensor Hub:</u> " + tracker_version_split.at(1);
+  default:
+      return QString::null;
   }
+
+  QStringList tracker_version_split = split.at(2).split(":");
+  /*
+   * tracker_version_split should look like this (or a newer version):
+   * 0='Tracker'
+   * 1='1.10.1.472'
+   */
+  if (tracker_version_split.length() != 2)
+      return QString::null;
+
+  result += "<u>IMU Sensor Hub:</u> " + tracker_version_split.at(1);
 
   return result;
 }
@@ -592,9 +606,9 @@ QString MainWindow::getFirmwareVersionsString() {
 // Supplementary executables --------------------------------------------------
 
 MainWindow::LaunchResult MainWindow::launchProcess(QString path,
-                                       PathMode path_mode /*=E_RELATIVE_PATH*/,
-                              QStringList args /*=QStringList()*/,
-                              LaunchMode launch_mode /*=E_ASYNCHRONOUS*/) {
+                                                   PathMode path_mode /*=E_RELATIVE_PATH*/,
+                                                   QStringList args /*=QStringList()*/,
+                                                   LaunchMode launch_mode /*=E_LM_ASYNCHRONOUS*/) {
   if (path_mode == E_PM_RELATIVE)
     path = QCoreApplication::applicationDirPath() + "/" + path;
 
@@ -602,8 +616,11 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
   if (!exe.exists())
     return E_LR_MISSING;
 
-  if (launch_mode == E_LM_SYNCHRONOUS) {
-      QProcess *process = new QProcess(this);
+  QProcess* process;
+
+  switch (launch_mode) {
+  case E_LM_SYNCHRONOUS:
+      process = new QProcess(this);
       connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
       process->start(path, args);
 
@@ -616,9 +633,23 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
       // Currently, we ignore the process' return code as long as it exited cleanly
       // return process->exitCode();
       return E_LR_SUCCESS;
-  } else {
-      bool result = QProcess::startDetached(path, args);
-      return result ? E_LR_SUCCESS : E_LR_UNABLE_TO_START;
+
+  case E_LM_KNOCK:
+      process = new QProcess(this);
+      connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
+      process->start(path, args);
+
+      if (!process->waitForStarted())
+          return E_LR_UNABLE_TO_START;
+
+      // Sleep long enough to ensure PuTTY is able to open the serial port
+      QThread::msleep(100);
+
+      process->kill();
+      return E_LR_SUCCESS;
+
+  case E_LM_ASYNCHRONOUS:
+      return QProcess::startDetached(path, args) ? E_LR_SUCCESS : E_LR_UNABLE_TO_START;
   }
 }
 
