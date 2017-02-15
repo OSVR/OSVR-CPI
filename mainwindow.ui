@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>HDK Control Panel Interface</string>
+   <string>HDK Firmware Utility</string>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 8pt &quot;Arial&quot;;

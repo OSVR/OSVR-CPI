@@ -120,9 +120,9 @@ void MainWindow::on_helpButton_clicked() {
 
 void MainWindow::on_aboutButton_clicked() {
   QMessageBox::information(
-      0, QString("HDK Control Panel Interface"),
+      0, QString("HDK Firmware Utility"),
       QString("This application is a lightweight utility to help you configure "
-              "your HDK settings. For more information, visit "
+              "your HDK's firmware. For more information, visit "
               "<a href=http://www.osvr.org>osvr.org</a>."),
       QMessageBox::Ok);
   // loadConfigFile(QString("start.json"));
