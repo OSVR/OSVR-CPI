@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-Copyright 2016 OSVR and contributors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
@@ -96,164 +79,8 @@ font-size: 8pt;
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
-    <widget class="QWidget" name="SWUtilTab">
-     <attribute name="title">
-      <string>HDK Display Settings</string>
-     </attribute>
-     <widget class="QPushButton" name="recenterButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>111</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Recenter</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_30">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>351</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recenter your HMD's &lt;span style=&quot; font-style:italic;&quot;&gt;forward&lt;/span&gt;. Orient your headset in the direction that you would like to be forward, then click this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="displayMode">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>90</y>
-        <width>361</width>
-        <height>221</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Display Mode</string>
-      </property>
-      <widget class="QComboBox" name="GPUType">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>111</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <item>
-        <property name="text">
-         <string>    NVIDIA</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>    AMD</string>
-        </property>
-       </item>
-      </widget>
-      <widget class="QLabel" name="label_38">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>341</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Select your graphics card type before configuring display modes.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="directModeButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>90</y>
-         <width>111</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Direct Mode</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_31">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>120</y>
-         <width>341</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;direct-to-display&lt;/span&gt; mode. This mode is preferable if your graphics card supports it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="extendedModeButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>170</y>
-         <width>111</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Extended Mode</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_32">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>200</y>
-         <width>341</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;extended display&lt;/span&gt; mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
-    </widget>
     <widget class="QWidget" name="HDKTab">
      <attribute name="title">
       <string>HDK Firmware Settings</string>
@@ -491,6 +318,162 @@ font-size: 8pt;
        </property>
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configure screen persistence. Lower persistence results in improved image quality by reducing blur and other artifacts, but also reduces luminosity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="SWUtilTab">
+     <attribute name="title">
+      <string>HDK Display Settings</string>
+     </attribute>
+     <widget class="QPushButton" name="recenterButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>111</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Recenter</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_30">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>351</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recenter your HMD's &lt;span style=&quot; font-style:italic;&quot;&gt;forward&lt;/span&gt;. Orient your headset in the direction that you would like to be forward, then click this button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="displayMode">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>90</y>
+        <width>361</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Display Mode</string>
+      </property>
+      <widget class="QComboBox" name="GPUType">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>111</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <item>
+        <property name="text">
+         <string>    NVIDIA</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>    AMD</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="label_38">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>341</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Select your graphics card type before configuring display modes.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="directModeButton">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Direct Mode</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>341</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;direct-to-display&lt;/span&gt; mode. This mode is preferable if your graphics card supports it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="extendedModeButton">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>170</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Extended Mode</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_32">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>200</y>
+         <width>341</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable &lt;span style=&quot; font-weight:600;&quot;&gt;extended display&lt;/span&gt; mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

@@ -96,8 +96,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   m_GPUType = ui->GPUType->currentText();
 
-  // Temporarily remove the USER Settings tab
-  ui->tabWidget->removeTab(3);
+  // Hide user settings and display settings tab
+  ui->tabWidget->removeTab(2);
+  ui->tabWidget->removeTab(2);
 
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   QString programPath = "";
@@ -476,9 +477,6 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
 
   // find the OSVR HDK and get current FW version
   portName = findSerialPort(0x1532, 0x0B00);
-
-  // TODO: !
-  cout << "portname=" << portName.toUtf8().constData() << endl;
 
   if (portName != "Not found") {
     portKnock(portName);
