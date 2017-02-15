@@ -16,7 +16,7 @@ QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = OSVR_CPI
+TARGET = HDK_Firmware_Utility
 TEMPLATE = app
 
 
@@ -55,8 +55,8 @@ DISTFILES += \
 # Note: the version the executable gets is from version.h, not here
 VERSION = "0.0.1.0"
 QMAKE_TARGET_COMPANY = OSVR
-QMAKE_TARGET_PRODUCT = OSVR_CPI
-QMAKE_TARGET_DESCRIPTION = "OSVR Control Panel Interface"
+QMAKE_TARGET_PRODUCT = HDK_Firmware_Utility
+QMAKE_TARGET_DESCRIPTION = "HDK Firmware Utility"
 QMAKE_TARGET_COPYRIGHT = "Copyright 2016 OSVR and contributors"
 
 RC_FILE = resources.rc

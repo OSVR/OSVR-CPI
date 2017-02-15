@@ -519,7 +519,7 @@ void MainWindow::portKnock(QString portName) {
     args << "-serial" << portName;
     args << portName;
     launchProcess("putty.exe", E_PM_RELATIVE, args, E_LM_KNOCK);
-    QThread::msleep(100);   // sleep for long enough to ensure that serial port has been released by PuTTY
+    QThread::msleep(200);   // sleep for long enough to ensure that serial port has been released by PuTTY
 }
 
 QString MainWindow::getFirmwareVersionsString() {
@@ -641,13 +641,17 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
           return E_LR_UNABLE_TO_START;
 
       // Sleep long enough to ensure PuTTY is able to open the serial port
-      QThread::msleep(100);
+      QThread::msleep(200);
 
       process->kill();
       return E_LR_SUCCESS;
 
   case E_LM_ASYNCHRONOUS:
       return QProcess::startDetached(path, args) ? E_LR_SUCCESS : E_LR_UNABLE_TO_START;
+
+  default:
+      // Compiler appeasement
+      return E_LR_SUCCESS;
   }
 }
 

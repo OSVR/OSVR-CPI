@@ -25,13 +25,13 @@
 #define VER_PRODUCTVERSION_STR "1.0.0.0\0"
 
 #define VER_COMPANYNAME_STR "OSVR"
-#define VER_FILEDESCRIPTION_STR "OSVR Control Panel Interface"
-#define VER_INTERNALNAME_STR "OSVR Control Panel Interface"
+#define VER_FILEDESCRIPTION_STR "HDK Firmware Utility"
+#define VER_INTERNALNAME_STR "HDK Firmware Utility"
 #define VER_LEGALCOPYRIGHT_STR "Copyright \xa9 2016 Razer Inc."
 #define VER_LEGALTRADEMARKS1_STR "All Rights Reserved"
 #define VER_LEGALTRADEMARKS2_STR VER_LEGALTRADEMARKS1_STR
-#define VER_ORIGINALFILENAME_STR "OSVR_CPI.exe"
-#define VER_PRODUCTNAME_STR "OSVR_CPI"
+#define VER_ORIGINALFILENAME_STR "HDK_Firmware_Utility.exe"
+#define VER_PRODUCTNAME_STR "HDK_Firmware_Utility"
 
 #define VER_COMPANYDOMAIN_STR "osvr.org"
 
