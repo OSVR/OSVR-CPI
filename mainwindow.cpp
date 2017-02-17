@@ -240,8 +240,18 @@ void MainWindow::on_updateFWButton_clicked() {
   dialog.show();
   dialog.setText("Erasing existing firmware...");
 
-  if (atmel_erase()) {
+  int result = atmel_erase();
+  if (result == DFU_PROGRAMMER_MISSING) {
       dialog.close();
+      QMessageBox::critical(this, QString("Unable To Update Firmware"),
+                            QString("The dfu-programmer utility cannot be found. Please reinstall."
+                                    "<br><br>"
+                                    "Your HDK is currently in bootloader mode and is prepared to receive updated firmware. "
+                                    "It will not function until it is reset or new firmware is loaded."
+                                    "<br><br>"
+                                    "Please see online documentation for further information."));
+      return;
+  } else if (result) {
       QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
       return;
   }
@@ -267,7 +277,11 @@ void MainWindow::on_updateFWButton_clicked() {
   dialog.close();
   QMessageBox::information(this, QString("Firmware Update Complete"),
                            dialog.getText() +
-                               "<b>done.</b><br><br>Firmware update complete.");
+                           "<b>done.</b><br><br>Firmware update complete."
+                           "<br><br>"
+                           "The new firmware version will now be checked. Please wait a moment after clicking OK.");
+
+  QThread::sleep(3);
 
   // Verify FW version
   firmware_versions = getFirmwareVersionsString();
@@ -648,6 +662,7 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
       // Currently, we ignore the process' return code as long as it exited cleanly
       if (exit_code)
         *exit_code = process->exitCode();
+
       return E_LR_SUCCESS;
 
   case E_LM_KNOCK:
@@ -680,7 +695,9 @@ int MainWindow::atmel_erase() {
   args << "atxmega256a3bu"
        << "erase";
   int return_code;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
+  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code) == E_LR_MISSING)
+      return DFU_PROGRAMMER_MISSING;
+
   return return_code;
 }
 

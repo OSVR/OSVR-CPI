@@ -67,6 +67,7 @@ private:
 
   static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR;
   static const bool DEBUG_VERBOSE;
+  static const int DFU_PROGRAMMER_MISSING = -646675;
 
   QString m_osvrUserConfigFilename, m_GPUType;
   OSVRUser m_osvrUser;
