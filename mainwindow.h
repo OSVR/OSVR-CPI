@@ -93,12 +93,13 @@ private:
   LaunchResult launchProcess(QString path,
                     PathMode path_mode = E_PM_RELATIVE,
                     QStringList args = QStringList(),
-                    LaunchMode launch_mode = E_LM_ASYNCHRONOUS);
+                    LaunchMode launch_mode = E_LM_ASYNCHRONOUS,
+                    int* exit_code = NULL); // exit_code valid iff launch_mode==E_LM_SYNCHRONOUS
 
   /* ATMEL */
-  void atmel_erase();
-  void atmel_load(QString);
-  void atmel_launch();
+  int atmel_erase();
+  int atmel_load(QString);
+  int atmel_launch();
 
   /* GPU Detection */
   void detectGPUType();

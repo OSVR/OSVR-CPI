@@ -216,6 +216,7 @@ void MainWindow::on_updateFWButton_clicked() {
   if (reply == QMessageBox::No)
     return;
 
+  // Set bootloader mode
   sendCommandNoResult("#?b1948\n");
 
   QMessageBox bootloader_message(QMessageBox::Information,
@@ -239,22 +240,33 @@ void MainWindow::on_updateFWButton_clicked() {
   dialog.show();
   dialog.setText("Erasing existing firmware...");
 
-  atmel_erase();
+  if (atmel_erase()) {
+      dialog.close();
+      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      return;
+  }
 
   dialog.setText(dialog.getText() + "<b>done.</b><br>Loading new firmware...");
 
-  atmel_load(hexFile);
+  if (atmel_load(hexFile)) {
+      dialog.close();
+      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      return;
+  }
 
   dialog.setText(dialog.getText() +
                  "<b>done.</b><br>Launching new firmware...");
 
-  atmel_launch();
+  if (atmel_launch()) {
+      dialog.close();
+      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      return;
+  }
 
-  QString progress = dialog.getText();
+  // Success!
   dialog.close();
-
   QMessageBox::information(this, QString("Firmware Update Complete"),
-                           progress +
+                           dialog.getText() +
                                "<b>done.</b><br><br>Firmware update complete.");
 
   // Verify FW version
@@ -610,7 +622,8 @@ QString MainWindow::getFirmwareVersionsString() {
 MainWindow::LaunchResult MainWindow::launchProcess(QString path,
                                                    PathMode path_mode /*=E_RELATIVE_PATH*/,
                                                    QStringList args /*=QStringList()*/,
-                                                   LaunchMode launch_mode /*=E_LM_ASYNCHRONOUS*/) {
+                                                   LaunchMode launch_mode /*=E_LM_ASYNCHRONOUS*/,
+                                                   int* exit_code /*Valid iff launch_mode==E_LM_SYNCHRONOUS*/) {
   if (path_mode == E_PM_RELATIVE)
     path = QCoreApplication::applicationDirPath() + "/" + path;
 
@@ -633,7 +646,8 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
           return E_LR_UNABLE_TO_WAIT;
 
       // Currently, we ignore the process' return code as long as it exited cleanly
-      // return process->exitCode();
+      if (exit_code)
+        *exit_code = process->exitCode();
       return E_LR_SUCCESS;
 
   case E_LM_KNOCK:
@@ -661,26 +675,32 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
 
 // ATMEL ----------------------------------------------------------------------
 
-void MainWindow::atmel_erase() {
+int MainWindow::atmel_erase() {
   QStringList args;
   args << "atxmega256a3bu"
        << "erase";
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS);
+  int return_code;
+  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
+  return return_code;
 }
 
-void MainWindow::atmel_load(QString fwFile) {
+int MainWindow::atmel_load(QString fwFile) {
   QStringList args;
   args << "atxmega256a3bu"
        << "flash" << fwFile;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS);
+  int return_code;
+  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
+  return return_code;
 }
 
-void MainWindow::atmel_launch() {
+int MainWindow::atmel_launch() {
   QStringList args;
   args << "atxmega256a3bu"
        << "launch";
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS);
+  int return_code;
+  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
   QThread::sleep(3);
+  return return_code;
 }
 
 // GPU Detection --------------------------------------------------------------
