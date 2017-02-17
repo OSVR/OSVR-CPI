@@ -38,6 +38,7 @@
 // Constants ------------------------------------------------------------------
 
 const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
+const QString MainWindow::RELATIVE_DFU_PROGRAMMER_DIR = QString("/dfu-prog-usb-1.2.2/");
 const bool MainWindow::DEBUG_VERBOSE = false;
 
 // Helper class for validating numerical input --------------------------------
@@ -120,7 +121,7 @@ void MainWindow::on_helpButton_clicked() {
 
 void MainWindow::on_aboutButton_clicked() {
   QMessageBox::information(
-      0, QString("HDK Firmware Utility"),
+      this, QString("HDK Firmware Utility"),
       QString("This application is a lightweight utility to help you configure "
               "your HDK's firmware. For more information, visit "
               "<a href=http://www.osvr.org>osvr.org</a>."),
@@ -146,7 +147,7 @@ void MainWindow::on_checkFWButton_clicked() {
   if (versions == QString::null) {
     showFirmwareVersionError();
   } else {
-    QMessageBox::information(0, "Firmware Version Information", versions,
+    QMessageBox::information(this, "Firmware Version Information", versions,
                              QMessageBox::Ok);
   }
 }
@@ -154,7 +155,7 @@ void MainWindow::on_checkFWButton_clicked() {
 void MainWindow::showFirmwareVersionError()
 {
     QMessageBox::critical(
-        0, QString("Error"),
+        this, QString("Error"),
         QString("Unable to read firmware version. Please ensure that your "
           "HDK is properly connected and try again. If the problem "
           "persists, refer to the online documentation for further "
@@ -217,19 +218,22 @@ void MainWindow::on_updateFWButton_clicked() {
 
   sendCommandNoResult("#?b1948\n");
 
-  QMessageBox::information(
-      0, QString("Bootloader Mode Initalized"),
-      QString("This application uses the open source <a "
-              "href=\"dfu-programmer.github.io\">dfu-programmer "
-              "project</a>.<br><br>"
-              "At this time your device should now be in ATMEL bootloader "
-              "mode. If you haven't loaded the ATMEL drivers yet, you should "
-              "do so now. "
-              "You can find the drivers within the <i>dfu-prog-usb-1.2.2</i> "
-              "folder.<br><br>"
-              "Right click on the device in the Device Manager and select "
-              "Update Driver Software.<br><br>"
-              "Press OK to continue."));
+  QMessageBox bootloader_message(QMessageBox::Information,
+                                 QString("Bootloader Mode Initalized"),
+                                 QString("This application uses the open source <a href=\"http://dfu-programmer.github.io\">dfu-programmer utility</a>."
+                                         "<br><br>"
+                                         "At this time your device should now be in ATMEL bootloader mode. "
+                                         "If you haven't loaded the ATMEL drivers yet, you should do so now. "
+                                         "You can find the drivers within the <a href=\"file:///" +
+                                         QCoreApplication::applicationDirPath() + RELATIVE_DFU_PROGRAMMER_DIR +
+                                         "\">dfu-prog-usb-1.2.2 folder</a>."
+                                         "<br><br>"
+                                         "Right click on the device in the Device Manager and select Update Driver Software."
+                                         "<br><br>"
+                                         "Click OK to continue."));
+  bootloader_message.setTextFormat(Qt::RichText);
+  bootloader_message.setTextInteractionFlags(Qt::TextBrowserInteraction);
+  bootloader_message.exec();
 
   FirmwareUpdateProgressDialog dialog;
   dialog.show();
@@ -249,7 +253,7 @@ void MainWindow::on_updateFWButton_clicked() {
   QString progress = dialog.getText();
   dialog.close();
 
-  QMessageBox::information(0, QString("Firmware Update Complete"),
+  QMessageBox::information(this, QString("Firmware Update Complete"),
                            progress +
                                "<b>done.</b><br><br>Firmware update complete.");
 
@@ -258,7 +262,7 @@ void MainWindow::on_updateFWButton_clicked() {
   if (firmware_versions == QString::null) {
     showFirmwareVersionError();
   } else {
-    QMessageBox::information(0, QString("Firmware Update Complete"),
+    QMessageBox::information(this, QString("Firmware Update Complete"),
                              "<b>New Firmware Versions:</b><br>" +
                                  firmware_versions,
                              QMessageBox::Ok);
@@ -284,7 +288,7 @@ void MainWindow::on_directModeButton_clicked() {
     exe = "EnableOSVRDirectModeAMD.exe";
   else {
     QMessageBox::critical(
-        0, "Unable To Set Direct Mode",
+        this, "Unable To Set Direct Mode",
         "You must select a graphics card type of NVIDIA or AMD.",
         QMessageBox::Ok);
     return;
@@ -294,7 +298,7 @@ void MainWindow::on_directModeButton_clicked() {
   switch (launch_result) {
   case E_LR_MISSING:
       QMessageBox::critical(
-          0, "Unable To Set Direct Mode",
+          this, "Unable To Set Direct Mode",
           "Unable to locate the executable which is used to toggle direct " \
                   "mode (<b>" + exe + "</b>). Please reinstall.",
           QMessageBox::Ok);
@@ -302,7 +306,7 @@ void MainWindow::on_directModeButton_clicked() {
 
   case E_LR_UNABLE_TO_START:
   case E_LR_UNABLE_TO_WAIT:
-    QMessageBox::critical(0, "Unable To Set Direct Mode",
+    QMessageBox::critical(this, "Unable To Set Direct Mode",
                           "Unable to set direct mode. Try running <b>" + exe +
                               "</b> manually.",
                           QMessageBox::Ok);
@@ -322,7 +326,7 @@ void MainWindow::on_extendedModeButton_clicked() {
       exe = "DisableOSVRDirectModeAMD.exe";
     else {
       QMessageBox::critical(
-          0, "Unable To Set Extended Mode",
+          this, "Unable To Set Extended Mode",
           "You must select a graphics card type of NVIDIA or AMD.",
           QMessageBox::Ok);
       return;
@@ -332,7 +336,7 @@ void MainWindow::on_extendedModeButton_clicked() {
     switch (launch_result) {
     case E_LR_MISSING:
         QMessageBox::critical(
-            0, "Unable To Set Extended Mode",
+            this, "Unable To Set Extended Mode",
             "Unable to locate the executable which is used to toggle extended " \
                     "mode (<b>" + exe + "</b>). Please reinstall.",
             QMessageBox::Ok);
@@ -340,7 +344,7 @@ void MainWindow::on_extendedModeButton_clicked() {
 
     case E_LR_UNABLE_TO_START:
     case E_LR_UNABLE_TO_WAIT:
-      QMessageBox::critical(0, "Unable To Set Extended Mode",
+      QMessageBox::critical(this, "Unable To Set Extended Mode",
                             "Unable to set extended mode. Try running <b>" + exe +
                                 "</b> manually.",
                             QMessageBox::Ok);
@@ -415,10 +419,10 @@ QString MainWindow::findSerialPort(int VID, int PID) {
 
   if (DEBUG_VERBOSE) {
     if (deviceFound) {
-      QMessageBox::information(0, "Device Located",
+      QMessageBox::information(this, "Device Located",
                                "COM port: " + outputString);
     } else {
-      QMessageBox::warning(0, "Unable To Locate Device",
+      QMessageBox::warning(this, "Unable To Locate Device",
                            "Unable to find device. Ensure it is connected as "
                            "shown in the manual.");
     }

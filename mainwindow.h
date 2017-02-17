@@ -65,7 +65,7 @@ private slots:
 private:
   Ui::MainWindow *ui;
 
-  static const QString RELATIVE_BIN_DIR;
+  static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR;
   static const bool DEBUG_VERBOSE;
 
   QString m_osvrUserConfigFilename, m_GPUType;
