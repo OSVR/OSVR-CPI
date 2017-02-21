@@ -222,7 +222,7 @@ void MainWindow::on_updateFWButton_clicked() {
     return;
 
   // Set bootloader mode
-  // sendCommandNoResult("#?b1948\n");
+  sendCommandNoResult("#?b1948\n");
 
   QMessageBox bootloader_message(QMessageBox::Information,
                                  QString("Bootloader Mode Initalized"),
