@@ -28,8 +28,15 @@ public:
   explicit FirmwareUpdateProgressDialog(QWidget *parent = 0);
   ~FirmwareUpdateProgressDialog();
 
+  void setTitle(QString title);
+
   void setText(QString text);
   QString getText();
+
+  void showOK();
+
+private slots:
+  void on_firmwareUpdateOKButton_clicked();
 
 private:
   Ui::FirmwareUpdateProgressDialog *ui;

@@ -39,6 +39,7 @@
 
 const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
 const QString MainWindow::RELATIVE_DFU_PROGRAMMER_DIR = QString("/dfu-prog-usb-1.2.2/");
+const QString MainWindow::POST_FW_UPDATE_STR = "The new firmware version will now be checked. Please wait a moment...";
 const bool MainWindow::DEBUG_VERBOSE = false;
 
 // Helper class for validating numerical input --------------------------------
@@ -274,25 +275,27 @@ void MainWindow::on_updateFWButton_clicked() {
   }
 
   // Success!
-  dialog.close();
-  QMessageBox::information(this, QString("Firmware Update Complete"),
-                           dialog.getText() +
-                           "<b>done.</b><br><br>Firmware update complete."
-                           "<br><br>"
-                           "The new firmware version will now be checked. Please wait a moment after clicking OK.");
+  dialog.setText(dialog.getText() +
+                 "<b>done.</b><br><br>Firmware update complete."
+                 "<br><br>" +
+                 POST_FW_UPDATE_STR);
+  dialog.setTitle(QString("Firmware Update Complete"));
 
   QThread::sleep(3);
+
+  QString text = dialog.getText();
+  text.chop(POST_FW_UPDATE_STR.length());
 
   // Verify FW version
   firmware_versions = getFirmwareVersionsString();
   if (firmware_versions == QString::null) {
-    showFirmwareVersionError();
+    dialog.setText(text + "<b>Unable to detect new firmware version. Please refer to documentation for further information.</b>");
   } else {
-    QMessageBox::information(this, QString("Firmware Update Complete"),
-                             "<b>New Firmware Versions:</b><br>" +
-                                 firmware_versions,
-                             QMessageBox::Ok);
+    dialog.setText(text + "<b>New firmware versions:</b><br>" + firmware_versions);
   }
+
+  dialog.showOK();
+  dialog.exec();
 }
 
 // Display --------------------------------------------------------------------
@@ -634,10 +637,11 @@ QString MainWindow::getFirmwareVersionsString() {
 // Supplementary executables --------------------------------------------------
 
 MainWindow::LaunchResult MainWindow::launchProcess(QString path,
-                                                   PathMode path_mode /*=E_RELATIVE_PATH*/,
-                                                   QStringList args /*=QStringList()*/,
-                                                   LaunchMode launch_mode /*=E_LM_ASYNCHRONOUS*/,
-                                                   int* exit_code /*Valid iff launch_mode==E_LM_SYNCHRONOUS*/) {
+                                                   PathMode path_mode, // = E_RELATIVE_PATH
+                                                   QStringList args, // = QStringList()
+                                                   LaunchMode launch_mode, // E_LM_ASYNCHRONOUS
+                                                   int* exit_code, // Valid iff launch_mode==E_LM_SYNCHRONOUS,
+                                                   int timeout_ms) { // default: no timeout
   if (path_mode == E_PM_RELATIVE)
     path = QCoreApplication::applicationDirPath() + "/" + path;
 
@@ -656,10 +660,9 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
       if (!process->waitForStarted())
           return E_LR_UNABLE_TO_START;
 
-      if (!process->waitForFinished())
+      if (!process->waitForFinished(timeout_ms))
           return E_LR_UNABLE_TO_WAIT;
 
-      // Currently, we ignore the process' return code as long as it exited cleanly
       if (exit_code)
         *exit_code = process->exitCode();
 
@@ -695,7 +698,7 @@ int MainWindow::atmel_erase() {
   args << "atxmega256a3bu"
        << "erase";
   int return_code;
-  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code) == E_LR_MISSING)
+  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING)
       return DFU_PROGRAMMER_MISSING;
 
   return return_code;
@@ -706,7 +709,7 @@ int MainWindow::atmel_load(QString fwFile) {
   args << "atxmega256a3bu"
        << "flash" << fwFile;
   int return_code;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
+  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
   return return_code;
 }
 
@@ -715,7 +718,7 @@ int MainWindow::atmel_launch() {
   args << "atxmega256a3bu"
        << "launch";
   int return_code;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code);
+  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
   QThread::sleep(3);
   return return_code;
 }

@@ -65,9 +65,10 @@ private slots:
 private:
   Ui::MainWindow *ui;
 
-  static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR;
+  static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR,
+                       POST_FW_UPDATE_STR;
   static const bool DEBUG_VERBOSE;
-  static const int DFU_PROGRAMMER_MISSING = -646675;
+  static const int DFU_PROGRAMMER_MISSING = -646675, DFU_PROGRAMMER_TIMEOUT_MS = 10000;
 
   QString m_osvrUserConfigFilename, m_GPUType;
   OSVRUser m_osvrUser;
@@ -95,7 +96,8 @@ private:
                     PathMode path_mode = E_PM_RELATIVE,
                     QStringList args = QStringList(),
                     LaunchMode launch_mode = E_LM_ASYNCHRONOUS,
-                    int* exit_code = NULL); // exit_code valid iff launch_mode==E_LM_SYNCHRONOUS
+                    int* exit_code = NULL, // exit_code valid iff launch_mode==E_LM_SYNCHRONOUS
+                    int timeout_ms = -1); // -1 = no timeout
 
   /* ATMEL */
   int atmel_erase();

@@ -24,7 +24,7 @@ limitations under the License.
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>100</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@ limitations under the License.
      <x>10</x>
      <y>10</y>
      <width>281</width>
-     <height>81</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="text">
@@ -44,6 +44,22 @@ limitations under the License.
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="firmwareUpdateOKButton">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>140</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
    </property>
   </widget>
  </widget>

@@ -20,9 +20,15 @@ FirmwareUpdateProgressDialog::FirmwareUpdateProgressDialog(QWidget *parent)
                           Qt::WindowTitleHint),
       ui(new Ui::FirmwareUpdateProgressDialog) {
   ui->setupUi(this);
+
+  ui->firmwareUpdateOKButton->setVisible(false);
 }
 
 FirmwareUpdateProgressDialog::~FirmwareUpdateProgressDialog() { delete ui; }
+
+void FirmwareUpdateProgressDialog::setTitle(QString title) {
+  setWindowTitle(title);
+}
 
 void FirmwareUpdateProgressDialog::setText(QString text) {
   m_text = text;
@@ -31,3 +37,10 @@ void FirmwareUpdateProgressDialog::setText(QString text) {
 }
 
 QString FirmwareUpdateProgressDialog::getText() { return m_text; }
+
+void FirmwareUpdateProgressDialog::showOK() {
+    ui->firmwareUpdateOKButton->setVisible(true);
+    activateWindow();
+}
+
+void FirmwareUpdateProgressDialog::on_firmwareUpdateOKButton_clicked() { close(); }
