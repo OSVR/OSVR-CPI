@@ -40,6 +40,10 @@
 const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
 const QString MainWindow::RELATIVE_DFU_PROGRAMMER_DIR = QString("/dfu-prog-usb-1.2.2/");
 const QString MainWindow::POST_FW_UPDATE_STR = "The new firmware version will now be checked. Please wait a moment...";
+const QString MainWindow::FW_UPDATE_FAIL_STR = "Your HDK is currently in bootloader mode and is prepared to receive updated firmware. "
+                                               "It will not function until it is reset or new firmware is loaded."
+                                               "<br><br>"
+                                               "Please see online documentation for further information.";
 const bool MainWindow::DEBUG_VERBOSE = false;
 
 // Helper class for validating numerical input --------------------------------
@@ -218,7 +222,7 @@ void MainWindow::on_updateFWButton_clicked() {
     return;
 
   // Set bootloader mode
-  sendCommandNoResult("#?b1948\n");
+  // sendCommandNoResult("#?b1948\n");
 
   QMessageBox bootloader_message(QMessageBox::Information,
                                  QString("Bootloader Mode Initalized"),
@@ -246,22 +250,21 @@ void MainWindow::on_updateFWButton_clicked() {
       dialog.close();
       QMessageBox::critical(this, QString("Unable To Update Firmware"),
                             QString("The dfu-programmer utility cannot be found. Please reinstall."
-                                    "<br><br>"
-                                    "Your HDK is currently in bootloader mode and is prepared to receive updated firmware. "
-                                    "It will not function until it is reset or new firmware is loaded."
-                                    "<br><br>"
-                                    "Please see online documentation for further information."));
+                                    "<br><br>") + FW_UPDATE_FAIL_STR);
       return;
   } else if (result) {
-      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      dialog.setText(dialog.getText() + "<b>failed!</b><br><br>" + FW_UPDATE_FAIL_STR);
+      dialog.showOK();
+      dialog.exec();
       return;
   }
 
   dialog.setText(dialog.getText() + "<b>done.</b><br>Loading new firmware...");
 
   if (atmel_load(hexFile)) {
-      dialog.close();
-      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      dialog.setText(dialog.getText() + "<b>failed!</b><br><br>" + FW_UPDATE_FAIL_STR);
+      dialog.showOK();
+      dialog.exec();
       return;
   }
 
@@ -269,8 +272,9 @@ void MainWindow::on_updateFWButton_clicked() {
                  "<b>done.</b><br>Launching new firmware...");
 
   if (atmel_launch()) {
-      dialog.close();
-      QMessageBox::critical(this, "Firmware Update Failed", dialog.getText() + "<b>failed!</b><br>");
+      dialog.setText(dialog.getText() + "<b>failed!</b><br><br>" + FW_UPDATE_FAIL_STR);
+      dialog.showOK();
+      dialog.exec();
       return;
   }
 
@@ -289,7 +293,7 @@ void MainWindow::on_updateFWButton_clicked() {
   // Verify FW version
   firmware_versions = getFirmwareVersionsString();
   if (firmware_versions == QString::null) {
-    dialog.setText(text + "<b>Unable to detect new firmware version. Please refer to documentation for further information.</b>");
+    dialog.setText(text + "<b>Unable to detect new firmware version. Please refer to online documentation for further information.</b>");
   } else {
     dialog.setText(text + "<b>New firmware versions:</b><br>" + firmware_versions);
   }
@@ -700,7 +704,6 @@ int MainWindow::atmel_erase() {
   int return_code;
   if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING)
       return DFU_PROGRAMMER_MISSING;
-
   return return_code;
 }
 
