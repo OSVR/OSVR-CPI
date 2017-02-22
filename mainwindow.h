@@ -68,7 +68,7 @@ private:
   static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR,
                        POST_FW_UPDATE_STR, FW_UPDATE_FAIL_STR;
   static const bool DEBUG_VERBOSE;
-  static const int DFU_PROGRAMMER_MISSING = -646675, DFU_PROGRAMMER_TIMEOUT_MS = 10000;
+  static const int DFU_PROGRAMMER_MISSING = -646675, DFU_PROGRAMMER_TIMEOUT_MS = 15000;
 
   QString m_osvrUserConfigFilename, m_GPUType;
   OSVRUser m_osvrUser;
