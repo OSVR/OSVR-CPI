@@ -400,15 +400,15 @@ void MainWindow::on_toggleSBSButton_clicked() {
 }
 
 void MainWindow::on_screenPersistenceFull_clicked() {
-  sendCommandNoResult("#sp03C50");
+  sendCommandNoResult("#sp03C50\n");
 }
 
 void MainWindow::on_screenPersistenceMedium_clicked() {
-  sendCommandNoResult("#sp03C32");
+  sendCommandNoResult("#sp03C32\n");
 }
 
 void MainWindow::on_screenPersistenceLow_clicked() {
-  sendCommandNoResult("#sp03C0A");
+  sendCommandNoResult("#sp03C0A\n");
 }
 
 // Serial ---------------------------------------------------------------------
