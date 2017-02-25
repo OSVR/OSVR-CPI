@@ -513,27 +513,40 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
   QString portName;
 
   // find the OSVR HDK and get current FW version
-  portName = findSerialPort(0x1532, 0x0B00);
-
-  if (portName != "Not found") {
-    portKnock(portName);
-
-    thePort = openSerialPort(portName);
-    if (thePort) {
-      writeSerialData(thePort, theCommand);
-      if (thePort->waitForReadyRead(5000)) {
-        theResult = thePort->readAll();
-      }
-      thePort->close();
-    }
-  } else {
-    if (DEBUG_VERBOSE)
-      QMessageBox::critical(
-          this, tr("Error Sending Command"),
-          "Unable to retrieve results from command '" + theCommand +
-              "'. Try reconnecting and power cycling your HMD.");
+  portName = findSerialPort(SERIAL_PORT_VID, SERIAL_PORT_PID);
+  if (portName == "Not found") {
+      QMessageBox::critical(this,
+                            QString("Unable To Send Command"),
+                            QString("Unable to locate serial port. Please disconnect and reconnect your HDK."));
+      return QString::null;
   }
-  return theResult;
+
+  portKnock(portName);
+
+  for (int i = 0; i < SERIAL_PORT_RETRIES; i++) {
+      thePort = openSerialPort(portName);
+
+      if (thePort) {
+        writeSerialData(thePort, theCommand);
+
+        if (thePort->waitForReadyRead(SERIAL_READ_MS))
+          theResult = thePort->readAll();
+        else {
+            thePort->close();
+            continue;
+        }
+
+        thePort->close();
+        return theResult;
+      }
+
+      QThread::msleep(SERIAL_PORT_RETRY_MS);
+  }
+
+  QMessageBox::critical(this,
+                        QString("Unable To Send Command"),
+                        QString("Unable to send command '<b>'" + theCommand + "</b>. Please try again."));
+  return QString::null;
 }
 
 void MainWindow::sendCommandNoResult(QByteArray theCommand) {
@@ -541,14 +554,29 @@ void MainWindow::sendCommandNoResult(QByteArray theCommand) {
   QString portName;
 
   // find the OSVR HDK and get current FW version
-  portName = findSerialPort(0x1532, 0x0B00);
-  if (portName != "Not found") {
-    thePort = openSerialPort(portName);
-    if (thePort) {
-      writeSerialData(thePort, theCommand);
-    }
-    thePort->close();
+  portName = findSerialPort(SERIAL_PORT_VID, SERIAL_PORT_PID);
+  if (portName == "Not found") {
+      QMessageBox::critical(this,
+                            QString("Unable To Send Command"),
+                            QString("Unable to locate serial port. Please disconnect and reconnect your HDK."));
+      return;
   }
+
+  for (int i = 0; i < SERIAL_PORT_RETRIES; i++) {
+      thePort = openSerialPort(portName);
+
+      if (thePort) {
+        writeSerialData(thePort, theCommand);
+        thePort->close();
+        return;
+      }
+
+      QThread::msleep(SERIAL_PORT_RETRY_MS);
+  }
+
+  QMessageBox::critical(this,
+                        QString("Unable To Send Command"),
+                        QString("Unable to send command '<b>'" + theCommand + "</b>. Please try again."));
 }
 
 void MainWindow::portKnock(QString portName) {
@@ -556,14 +584,14 @@ void MainWindow::portKnock(QString portName) {
     args << "-serial" << portName;
     args << portName;
     launchProcess("putty.exe", E_PM_RELATIVE, args, E_LM_KNOCK);
-    QThread::msleep(200);   // sleep for long enough to ensure that serial port has been released by PuTTY
+    QThread::msleep(PORT_KNOCK_SLEEP_MS);   // sleep for long enough to ensure that serial port has been released by PuTTY
 }
 
 QString MainWindow::getFirmwareVersionsString() {
   QString response = sendCommandWaitForResults("#?v\n");
   QString result = "<u>HMD Main Board:</u> ";
 
-  if (response == "")
+  if (response == QString::null)
       return QString::null;
 
   response = response.replace("\r", "");
