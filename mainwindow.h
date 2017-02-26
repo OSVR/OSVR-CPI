@@ -71,9 +71,9 @@ private:
   static const int DFU_PROGRAMMER_MISSING = -646675,
                    DFU_PROGRAMMER_TIMEOUT_MS = 15000,
                    PORT_KNOCK_SLEEP_MS = 200,
-                   SERIAL_PORT_RETRIES = 5,
+                   SERIAL_PORT_RETRIES = 3,
                    SERIAL_PORT_RETRY_MS = 100,
-                   SERIAL_READ_MS = 5000,
+                   SERIAL_READ_MS = 1000,
                    SERIAL_PORT_VID = 0x1532,
                    SERIAL_PORT_PID = 0x0B00;
 

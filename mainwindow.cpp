@@ -152,7 +152,7 @@ void MainWindow::on_checkFWButton_clicked() {
   if (versions == QString::null) {
     showFirmwareVersionError();
   } else {
-    QMessageBox::information(this, "Firmware Version Information", versions,
+    QMessageBox::information(this, "Firmware Versions", versions,
                              QMessageBox::Ok);
   }
 }
@@ -162,9 +162,9 @@ void MainWindow::showFirmwareVersionError()
     QMessageBox::critical(
         this, QString("Error"),
         QString("Unable to read firmware version. Please ensure that your "
-          "HDK is properly connected and try again. If the problem "
-          "persists, refer to the online documentation for further "
-          "information."),
+          "HDK is properly connected and that no other programs are connected "
+          "to its serial port, then try again. If the problem persists, refer "
+          "to the online documentation for further information."),
         QMessageBox::Ok);
 }
 
@@ -189,8 +189,9 @@ void MainWindow::on_updateFWButton_clicked() {
 
   // Make absolutely sure the user actually selected a file (this should be
   // impossible)
-  if (hexFile == "")
+  if (hexFile == "") {
     return;
+  }
 
   // find the OSVR HDK and get current FW version
   QString firmware_versions = getFirmwareVersionsString();
@@ -218,8 +219,9 @@ void MainWindow::on_updateFWButton_clicked() {
           QMessageBox::Yes | QMessageBox::No);
   }
 
-  if (reply == QMessageBox::No)
+  if (reply == QMessageBox::No) {
     return;
+  }
 
   // Set bootloader mode
   sendCommandNoResult("#?b1948\n");
@@ -315,11 +317,11 @@ void MainWindow::on_GPUType_currentIndexChanged(const QString &gpu_type) {
 void MainWindow::on_directModeButton_clicked() {
   QString exe;
 
-  if (m_GPUType.contains("NVIDIA"))
+  if (m_GPUType.contains("NVIDIA")) {
     exe = "EnableOSVRDirectMode.exe";
-  else if (m_GPUType.contains("AMD"))
+  } else if (m_GPUType.contains("AMD")) {
     exe = "EnableOSVRDirectModeAMD.exe";
-  else {
+  } else {
     QMessageBox::critical(
         this, "Unable To Set Direct Mode",
         "You must select a graphics card type of NVIDIA or AMD.",
@@ -353,11 +355,11 @@ void MainWindow::on_directModeButton_clicked() {
 void MainWindow::on_extendedModeButton_clicked() {
     QString exe;
 
-    if (m_GPUType.contains("NVIDIA"))
+    if (m_GPUType.contains("NVIDIA")) {
       exe = "DisableOSVRDirectMode.exe";
-    else if (m_GPUType.contains("AMD"))
+    } else if (m_GPUType.contains("AMD")) {
       exe = "DisableOSVRDirectModeAMD.exe";
-    else {
+    } else {
       QMessageBox::critical(
           this, "Unable To Set Extended Mode",
           "You must select a graphics card type of NVIDIA or AMD.",
@@ -469,38 +471,44 @@ QSerialPort *MainWindow::openSerialPort(QString portName) {
   thePort->setPortName(portName);
 
   bool init_error = false;
-  if (!thePort->setBaudRate(QSerialPort::Baud57600))
+  if (!thePort->setBaudRate(QSerialPort::Baud57600)) {
     init_error = true;
-  if (thePort->error() != QSerialPort::NoError)
+  }
+  if (thePort->error() != QSerialPort::NoError) {
     init_error = true;
+  }
 
   if (!init_error && thePort->open(QIODevice::ReadWrite)) {
     if (thePort->baudRate() != QSerialPort::Baud57600) {
-      if (DEBUG_VERBOSE)
+      if (DEBUG_VERBOSE) {
         QMessageBox::warning(this, tr("Warning While Opening Port"),
                                       "When opening the serial port " + portName +
                                       ", the requested Baud setting of 57600 was not set.\n");
+      }
+
       return NULL;
     }
 
     return thePort;
   } else {
-    if (DEBUG_VERBOSE)
+    if (DEBUG_VERBOSE) {
       QMessageBox::critical(this, tr("Unable To Open Port"),
                                      "Unable to open serial port " + portName +
                                      ".\nPlease ensure the device is connected as "
                                      "shown in the manual and try again.\n");
+    }
     return NULL;
   }
 }
 
 void MainWindow::writeSerialData(QSerialPort *thePort, const QByteArray &data) {
   if (thePort->write(data) == -1) {
-    if (DEBUG_VERBOSE)
+    if (DEBUG_VERBOSE) {
       QMessageBox::critical(this, tr("Error Writing To Serial Port"),
                             "Unable to write to serial port.\nPlease ensure "
                             "the device is connected as shown in the manual "
                             "and try again.\n");
+    }
   }
   thePort->flush();
   thePort->waitForBytesWritten(5000);
@@ -529,23 +537,26 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
       if (thePort) {
         writeSerialData(thePort, theCommand);
 
-        if (thePort->waitForReadyRead(SERIAL_READ_MS))
+        if (thePort->waitForReadyRead(SERIAL_READ_MS)) {
           theResult = thePort->readAll();
+          thePort->close();
+          return theResult;
+        }
         else {
             thePort->close();
             continue;
         }
-
-        thePort->close();
-        return theResult;
       }
 
       QThread::msleep(SERIAL_PORT_RETRY_MS);
   }
 
-  QMessageBox::critical(this,
+  if (DEBUG_VERBOSE) {
+    QMessageBox::critical(this,
                         QString("Unable To Send Command"),
                         QString("Unable to send command '<b>'" + theCommand + "</b>. Please try again."));
+  }
+
   return QString::null;
 }
 
@@ -591,8 +602,9 @@ QString MainWindow::getFirmwareVersionsString() {
   QString response = sendCommandWaitForResults("#?v\n");
   QString result = "<u>HMD Main Board:</u> ";
 
-  if (response == QString::null)
+  if (response == QString::null) {
       return QString::null;
+  }
 
   response = response.replace("\r", "");
   QStringList split = response.split("\n", QString::SplitBehavior::SkipEmptyParts);
@@ -609,8 +621,9 @@ QString MainWindow::getFirmwareVersionsString() {
    * 1: 'Version 1.99 (RELEASE) Nov 28 2016'
    * 2: 'Tracker:1.10.1.472'
    */
-  if (split.length() != 3)
+  if (split.length() != 3) {
       return QString::null;
+  }
 
   QStringList fw_version_split = split.at(1).split(" ", QString::SplitBehavior::SkipEmptyParts);
   /*
@@ -658,8 +671,9 @@ QString MainWindow::getFirmwareVersionsString() {
    * 0='Tracker'
    * 1='1.10.1.472'
    */
-  if (tracker_version_split.length() != 2)
+  if (tracker_version_split.length() != 2) {
       return QString::null;
+  }
 
   result += "<u>IMU Sensor Hub:</u> " + tracker_version_split.at(1);
 
@@ -674,12 +688,14 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
                                                    LaunchMode launch_mode, // E_LM_ASYNCHRONOUS
                                                    int* exit_code, // Valid iff launch_mode==E_LM_SYNCHRONOUS,
                                                    int timeout_ms) { // default: no timeout
-  if (path_mode == E_PM_RELATIVE)
+  if (path_mode == E_PM_RELATIVE) {
     path = QCoreApplication::applicationDirPath() + "/" + path;
+  }
 
   QFileInfo exe(path);
-  if (!exe.exists())
+  if (!exe.exists()) {
     return E_LR_MISSING;
+  }
 
   QProcess* process;
 
@@ -689,14 +705,17 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
       connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
       process->start(path, args);
 
-      if (!process->waitForStarted())
+      if (!process->waitForStarted()) {
           return E_LR_UNABLE_TO_START;
+      }
 
-      if (!process->waitForFinished(timeout_ms))
+      if (!process->waitForFinished(timeout_ms)) {
           return E_LR_UNABLE_TO_WAIT;
+      }
 
-      if (exit_code)
+      if (exit_code) {
         *exit_code = process->exitCode();
+      }
 
       return E_LR_SUCCESS;
 
@@ -705,8 +724,9 @@ MainWindow::LaunchResult MainWindow::launchProcess(QString path,
       connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
       process->start(path, args);
 
-      if (!process->waitForStarted())
+      if (!process->waitForStarted()) {
           return E_LR_UNABLE_TO_START;
+      }
 
       // Sleep long enough to ensure PuTTY is able to open the serial port
       QThread::msleep(200);
@@ -730,8 +750,9 @@ int MainWindow::atmel_erase() {
   args << "atxmega256a3bu"
        << "erase";
   int return_code;
-  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING)
+  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING) {
       return DFU_PROGRAMMER_MISSING;
+  }
   return return_code;
 }
 
@@ -761,10 +782,12 @@ void MainWindow::detectGPUType() {
     connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
     process->start("GPUTypeDetector.exe");
 
-    if (!process->waitForStarted())
+    if (!process->waitForStarted()) {
         return;
-    if (!process->waitForFinished())
+    }
+    if (!process->waitForFinished()) {
         return;
+    }
 
     switch((GPUType)process->exitCode()) {
     case E_GPUTYPE_NVIDIA:
@@ -795,7 +818,7 @@ bool MainWindow::loadConfigFile(QString filename) {
   Json::Reader reader;
   Json::Value value;
   if (!reader.parse(file_id, value)) {
-    qWarning("Couldn't open save file; creating file.");
+    // qWarning("Couldn't open save file; creating file.");
     // new file just has default values
     saveConfigFile(filename);
   } else {
@@ -806,10 +829,11 @@ bool MainWindow::loadConfigFile(QString filename) {
 }
 
 void MainWindow::updateFormValues() {
-  if ("Male" == m_osvrUser.gender())
+  if ("Male" == m_osvrUser.gender()) {
     ui->gender->setCurrentIndex(0);
-  else
+  } else {
     ui->gender->setCurrentIndex(1);
+  }
   ui->standingHeight->setText(QString::number(m_osvrUser.standingEyeHeight()));
   ui->seatedHeight->setText(QString::number(m_osvrUser.seatedEyeHeight()));
   ui->ipd->setText(QString::number(m_osvrUser.pupilDistance(OS) +
@@ -841,35 +865,46 @@ void MainWindow::loadValuesFromForm(OSVRUser *user) {
   }
 
   // Left eye settings
-  if (!ui->dOsSpherical->text().isEmpty())
+  if (!ui->dOsSpherical->text().isEmpty()) {
     user->setSpherical(OS, ui->dOsSpherical->text().toDouble());
-  if (!ui->dOsCylindrical->text().isEmpty())
+  }
+  if (!ui->dOsCylindrical->text().isEmpty()) {
     user->setCylindrical(OS, ui->dOsCylindrical->text().toDouble());
-  if (!ui->dOsAxis->text().isEmpty())
+  }
+  if (!ui->dOsAxis->text().isEmpty()) {
     user->setAxis(OS, ui->dOsAxis->text().toDouble());
-  if (!ui->nOsAdd->text().isEmpty())
+  }
+  if (!ui->nOsAdd->text().isEmpty()) {
     user->setAddNear(OS, ui->nOsAdd->text().toDouble());
+  }
 
   // right eye settings
-  if (!ui->dOdSpherical->text().isEmpty())
+  if (!ui->dOdSpherical->text().isEmpty()) {
     user->setSpherical(OD, ui->dOdSpherical->text().toDouble());
-  if (!ui->dOdCylindrical->text().isEmpty())
+  }
+  if (!ui->dOdCylindrical->text().isEmpty()) {
     user->setCylindrical(OD, ui->dOdCylindrical->text().toDouble());
-  if (!ui->dOdAxis->text().isEmpty())
+  }
+  if (!ui->dOdAxis->text().isEmpty()) {
     user->setAxis(OD, ui->dOdAxis->text().toDouble());
-  if (!ui->nOdAdd->text().isEmpty())
+  }
+  if (!ui->nOdAdd->text().isEmpty()) {
     user->setAddNear(OD, ui->nOdAdd->text().toDouble());
+  }
 
-  if (ui->ODdominant->isChecked())
+  if (ui->ODdominant->isChecked()) {
     user->setDominant(OD);
-  else
+  } else {
     user->setDominant(OS);
+  }
 
   // anthropometric settings
-  if (!ui->standingHeight->text().isEmpty())
+  if (!ui->standingHeight->text().isEmpty()) {
     user->setStandingEyeHeight(ui->standingHeight->text().toDouble());
-  if (!ui->seatedHeight->text().isEmpty())
+  }
+  if (!ui->seatedHeight->text().isEmpty()) {
     user->setSeatedEyeHeight(ui->seatedHeight->text().toDouble());
+  }
 }
 
 void MainWindow::saveConfigFile(QString filename) {
