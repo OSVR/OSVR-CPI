@@ -168,6 +168,47 @@ void MainWindow::showFirmwareVersionError()
         QMessageBox::Ok);
 }
 
+/**
+ * Reading the state of the lock pin from the FPGA fails on HDK 1.x units (which have an FPGA) and HDK 2 units that don't.
+ * However, it fails in a different way on each, allowing us to tell the difference betwen HDK 1 firmware and HDK 2 firmware.
+ * Note that this is a property of the firmware itself and not the underlying hardware, so if you manage to flash an HDK 1 with
+ * firmware compiled to target an HDK 2, this will report E_FW_TARGET_HDK_2.
+ */
+MainWindow::FirmwareTarget MainWindow::getFirmwareTarget() {
+    QString lockpin = sendCommandWaitForResults("#FL\n");
+
+    if (lockpin == QString::null) {
+        return E_FW_TARGET_UNKNOWN;
+    }
+
+    if (lockpin.contains("Bad command")) {
+        return E_FW_TARGET_HDK_1X;
+    }
+
+    return E_FW_TARGET_HDK_2;
+}
+
+bool MainWindow::checkFirmwareTarget(FirmwareTarget current_fw, QString hexFile) {
+    switch(current_fw) {
+    case E_FW_TARGET_HDK_1X:
+        if (hexFile.contains("HDK2_ONLY")) {
+            return false;
+        }
+        break;
+
+    case E_FW_TARGET_HDK_2:
+        if (hexFile.contains("HDK1_ONLY")) {
+            return false;
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    return true;
+}
+
 // FW Update button
 void MainWindow::on_updateFWButton_clicked() {
   // Ask user for the HEX file to update with
@@ -198,13 +239,36 @@ void MainWindow::on_updateFWButton_clicked() {
   QMessageBox::StandardButton reply;
 
   if (firmware_versions != QString::null) {
-    reply = QMessageBox::question(
-        this, tr("Ready To Update Firmware Versions"),
-        "<b>Current Firmware Versions:</b><br>" + firmware_versions +
+    FirmwareTarget current_fw = getFirmwareTarget();
+    if (checkFirmwareTarget(current_fw, hexFile)) {
+        reply = QMessageBox::question(
+            this, tr("Ready To Update Firmware Versions"),
+            "<b>Current Firmware Versions:</b><br>" + firmware_versions +
+                "<br><br><b>Firmware Hex File Selected For Update:</b><br>" +
+                hexFile +
+                "<br><br>Do you wish to proceed with the firmware update?",
+            QMessageBox::Yes | QMessageBox::No);
+    } else {
+        QString current_hw_guess = (current_fw == E_FW_TARGET_HDK_1X ? "1.x" : "2"),
+                update_hw_guess = (current_fw == E_FW_TARGET_HDK_1X ? "2" : "1.x");
+
+        reply = QMessageBox::critical(
+            this, tr("Selected Firmware Does Not Match!"),
+            "The firmware you have selected <b>does not match</b> the firmware currently running on your HDK. "
+            "Updating your HDK to use the selected firmware would most likely render your HDK <b>inoperable</b>. "
+            "The update will not proceed."
+            "<br><br>"
+            "Your HDK's current firmware is built for HDK " +
+                    current_hw_guess +
+            " hardware, and the selected firmware is intended for HDK " +
+                    update_hw_guess +
+            " hardware.<br><br>"
+            "<b>Current Firmware Versions:</b><br>" + firmware_versions +
             "<br><br><b>Firmware Hex File Selected For Update:</b><br>" +
-            hexFile +
-            "<br><br>Do you wish to proceed with the firmware update?",
-        QMessageBox::Yes | QMessageBox::No);
+            hexFile,
+            QMessageBox::Ok);
+        return;
+    }
   } else {
       reply = QMessageBox::question(
           this, tr("Ready To Update Firmware Versions"),

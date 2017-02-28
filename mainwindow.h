@@ -49,6 +49,7 @@ private slots:
   void on_checkFWButton_clicked();
   void on_updateFWButton_clicked();
 
+
   /* Display */
   void on_recenterButton_clicked();
   void on_GPUType_currentIndexChanged(const QString &arg1);
@@ -89,8 +90,12 @@ private:
   QString sendCommandWaitForResults(QByteArray);
   void portKnock(QString portName);
 
+  /* Firmware */
   QString getFirmwareVersionsString();
   void showFirmwareVersionError();
+  enum FirmwareTarget { E_FW_TARGET_UNKNOWN = -1, E_FW_TARGET_HDK_1X = 1, E_FW_TARGET_HDK_2 = 2 };
+  FirmwareTarget getFirmwareTarget();
+  bool checkFirmwareTarget(FirmwareTarget current_fw, QString hexFile);
 
   /* Supplementary executables */
   enum PathMode { E_PM_ABSOLUTE, E_PM_RELATIVE };
