@@ -211,25 +211,25 @@ bool MainWindow::checkFirmwareTarget(FirmwareTarget current_fw, QString hexFile)
 
 // FW Update button
 void MainWindow::on_updateFWButton_clicked() {
+  QMessageBox::information(this,
+              "HDK Driver Update",
+              "Before you can update your HDK's firmware, you must install additional drivers. "
+              "<br><br>"
+              "To install these drivers, click <a href=\"file:///" +
+              QCoreApplication::applicationDirPath() + RELATIVE_DFU_PROGRAMMER_DIR +
+              "\">here</a> and run <b>HDK_Bootloader_Drivers.exe</b>."
+              "<br><br>"
+              "To proceed, click OK. You will be prompted to select the new firmware.");
+
   // Ask user for the HEX file to update with
   QString hexFile;
-  QFileDialog fd(this);
-  fd.setFileMode(QFileDialog::ExistingFile);
-  fd.setNameFilter(tr("Firmware Hex Files (*.hex)"));
-  fd.setDirectory(QCoreApplication::applicationDirPath());
-  if (fd.exec()) {
-    QStringList selected_files = fd.selectedFiles();
 
-    // Sanity check selected files list (this should be impossible)
-    if (selected_files.length() != 1)
-      return;
+  hexFile = QFileDialog::getOpenFileName(this,
+                                         "Select Firmware Update File",
+                                         QCoreApplication::applicationDirPath(),
+                                         tr("Firmware Hex Files (*.hex)"));
 
-    hexFile = fd.selectedFiles().at(0);
-  } else
-    return; // user pressed cancel
-
-  // Make absolutely sure the user actually selected a file (this should be
-  // impossible)
+  // User pressed cancel
   if (hexFile == "") {
     return;
   }
@@ -244,7 +244,7 @@ void MainWindow::on_updateFWButton_clicked() {
         reply = QMessageBox::question(
             this, tr("Ready To Update Firmware Versions"),
             "<b>Current Firmware Versions:</b><br>" + firmware_versions +
-                "<br><br><b>Firmware Hex File Selected For Update:</b><br>" +
+                "<br><br><b>Selected Firmware Update File:</b><br>" +
                 hexFile +
                 "<br><br>Do you wish to proceed with the firmware update?",
             QMessageBox::Yes | QMessageBox::No);
@@ -288,29 +288,14 @@ void MainWindow::on_updateFWButton_clicked() {
   }
 
   // Set bootloader mode
-  sendCommandNoResult("#?b1948\n");
-
-  QMessageBox bootloader_message(QMessageBox::Information,
-                                 QString("Bootloader Mode Initalized"),
-                                 QString("This application uses the open source <a href=\"http://dfu-programmer.github.io\">dfu-programmer utility</a>."
-                                         "<br><br>"
-                                         "At this time your device should now be in ATMEL bootloader mode. "
-                                         "If you haven't loaded the ATMEL drivers yet, you should do so now. "
-                                         "You can find the drivers within the <a href=\"file:///" +
-                                         QCoreApplication::applicationDirPath() + RELATIVE_DFU_PROGRAMMER_DIR +
-                                         "\">dfu-prog-usb-1.2.2 folder</a>."
-                                         "<br><br>"
-                                         "Right click on the device in the Device Manager and select Update Driver Software."
-                                         "<br><br>"
-                                         "Click OK to continue."));
-  bootloader_message.setTextFormat(Qt::RichText);
-  bootloader_message.setTextInteractionFlags(Qt::TextBrowserInteraction);
-  bootloader_message.exec();
-
   FirmwareUpdateProgressDialog dialog;
   dialog.show();
-  dialog.setText("Erasing existing firmware...");
+  dialog.setText("Setting bootloader mode...");
+  sendCommandNoResult("#?b1948\n");
+  dialog.setText(dialog.getText() + "<b>done</b>.<br>");
 
+  // Erase firmware
+  dialog.setText(dialog.getText() + "Erasing existing firmware...");
   int result = atmel_erase();
   if (result == DFU_PROGRAMMER_MISSING) {
       dialog.close();
@@ -324,19 +309,19 @@ void MainWindow::on_updateFWButton_clicked() {
       dialog.exec();
       return;
   }
+  dialog.setText(dialog.getText() + "<b>done</b>.<br>Loading new firmware...");
 
-  dialog.setText(dialog.getText() + "<b>done.</b><br>Loading new firmware...");
-
+  // Load new firmware
   if (atmel_load(hexFile)) {
       dialog.setText(dialog.getText() + "<b>failed!</b><br><br>" + FW_UPDATE_FAIL_STR);
       dialog.showOK();
       dialog.exec();
       return;
   }
-
   dialog.setText(dialog.getText() +
-                 "<b>done.</b><br>Launching new firmware...");
+                 "<b>done</b>.<br>Launching new firmware...");
 
+  // Launch new firmware
   if (atmel_launch()) {
       dialog.setText(dialog.getText() + "<b>failed!</b><br><br>" + FW_UPDATE_FAIL_STR);
       dialog.showOK();
@@ -346,7 +331,7 @@ void MainWindow::on_updateFWButton_clicked() {
 
   // Success!
   dialog.setText(dialog.getText() +
-                 "<b>done.</b><br><br>Firmware update complete."
+                 "<b>done</b>.<br><br>Firmware update complete."
                  "<br><br>" +
                  POST_FW_UPDATE_STR);
   dialog.setTitle(QString("Firmware Update Complete"));
