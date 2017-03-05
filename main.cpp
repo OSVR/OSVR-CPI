@@ -24,6 +24,11 @@ int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
 
   MainWindow w;
+
+  if (argc == 2 && strncmp(argv[1], "-detecthw", 10) == 0) {
+    exit(w.getFirmwareTarget());
+  }
+
   w.show();
 
   return a.exec();

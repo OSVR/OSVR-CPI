@@ -41,7 +41,8 @@ const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
 const QString MainWindow::RELATIVE_DFU_PROGRAMMER_DIR = QString("/dfu-prog-usb-1.2.2/");
 const QString MainWindow::POST_FW_UPDATE_STR = "The new firmware version will now be checked. Please wait a moment...";
 const QString MainWindow::FW_UPDATE_FAIL_STR = "Your HDK is currently in bootloader mode and is prepared to receive updated firmware. "
-                                               "It will not function until it is reset or new firmware is loaded."
+                                               "It will not function until it is reset or new firmware is loaded. "
+                                               "It can generally be reset by unplugging and replugging it from the Belt Box module."
                                                "<br><br>"
                                                "Please see online documentation for further information.";
 const bool MainWindow::DEBUG_VERBOSE = false;
@@ -175,7 +176,7 @@ void MainWindow::showFirmwareVersionError()
  * firmware compiled to target an HDK 2, this will report E_FW_TARGET_HDK_2.
  */
 MainWindow::FirmwareTarget MainWindow::getFirmwareTarget() {
-    QString lockpin = sendCommandWaitForResults("#FL\n");
+    QString lockpin = sendCommandWaitForResults("#FL\n", true);
 
     if (lockpin == QString::null) {
         return E_FW_TARGET_UNKNOWN;
@@ -564,7 +565,7 @@ void MainWindow::writeSerialData(QSerialPort *thePort, const QByteArray &data) {
   QThread::sleep(1);
 }
 
-QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
+QString MainWindow::sendCommandWaitForResults(QByteArray theCommand, bool silent) {
   QByteArray theResult = "";
   QSerialPort *thePort;
   QString portName;
@@ -572,9 +573,12 @@ QString MainWindow::sendCommandWaitForResults(QByteArray theCommand) {
   // find the OSVR HDK and get current FW version
   portName = findSerialPort(SERIAL_PORT_VID, SERIAL_PORT_PID);
   if (portName == "Not found") {
-      QMessageBox::critical(this,
-                            QString("Unable To Send Command"),
-                            QString("Unable to locate serial port. Please disconnect and reconnect your HDK."));
+      if (!silent) {
+          QMessageBox::critical(this,
+                                QString("Unable To Send Command"),
+                                QString("Unable to locate serial port. Please disconnect and reconnect your HDK."));
+      }
+
       return QString::null;
   }
 

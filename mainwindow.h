@@ -35,6 +35,9 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
+  enum FirmwareTarget { E_FW_TARGET_UNKNOWN = 0, E_FW_TARGET_HDK_1X = 1, E_FW_TARGET_HDK_2 = 2 };
+  FirmwareTarget getFirmwareTarget();
+
 private slots:
   /* Bottom buttons */
   void on_helpButton_clicked();
@@ -86,15 +89,13 @@ private:
   QSerialPort *openSerialPort(QString);
   void writeSerialData(QSerialPort *thePort, const QByteArray &);
 
-  void sendCommandNoResult(QByteArray);
-  QString sendCommandWaitForResults(QByteArray);
+  void sendCommandNoResult(QByteArray command);
+  QString sendCommandWaitForResults(QByteArray command, bool silent = false);
   void portKnock(QString portName);
 
   /* Firmware */
   QString getFirmwareVersionsString();
   void showFirmwareVersionError();
-  enum FirmwareTarget { E_FW_TARGET_UNKNOWN = -1, E_FW_TARGET_HDK_1X = 1, E_FW_TARGET_HDK_2 = 2 };
-  FirmwareTarget getFirmwareTarget();
   bool checkFirmwareTarget(FirmwareTarget current_fw, QString hexFile);
 
   /* Supplementary executables */
