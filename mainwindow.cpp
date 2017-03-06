@@ -37,15 +37,17 @@
 
 // Constants ------------------------------------------------------------------
 
-const QString MainWindow::RELATIVE_BIN_DIR = QString("/../OSVR-Core/bin/");
-const QString MainWindow::RELATIVE_DFU_PROGRAMMER_DIR = QString("/dfu-prog-usb-1.2.2/");
+const QString MainWindow::RELATIVE_BIN_DIR = "/../OSVR-Core/bin/";
+const QString MainWindow::DFU_PROGRAMMER_RELATIVE_DIR = "/dfu-prog-usb-1.2.2/";
+const QString MainWindow::DFU_PROGRAMMER_NAME = "dfu-programmer.exe";
+const QString MainWindow::GPU_TYPE_DETECTOR_NAME = "GPUTypeDetector.exe";
+const QString MainWindow::ATMEL_DETECTOR_NAME = "AtmelDetector.exe";
 const QString MainWindow::POST_FW_UPDATE_STR = "The new firmware version will now be checked. Please wait a moment...";
 const QString MainWindow::FW_UPDATE_FAIL_STR = "Your HDK is currently in bootloader mode and is prepared to receive updated firmware. "
                                                "It will not function until it is reset or new firmware is loaded. "
                                                "It can generally be reset by unplugging and replugging it from the Belt Box module."
                                                "<br><br>"
                                                "Please see online documentation for further information.";
-const bool MainWindow::DEBUG_VERBOSE = false;
 
 // Helper class for validating numerical input --------------------------------
 
@@ -217,7 +219,7 @@ void MainWindow::on_updateFWButton_clicked() {
               "Before you can update your HDK's firmware, you must install additional drivers. "
               "<br><br>"
               "To install these drivers, click <a href=\"file:///" +
-              QCoreApplication::applicationDirPath() + RELATIVE_DFU_PROGRAMMER_DIR +
+              QCoreApplication::applicationDirPath() + DFU_PROGRAMMER_RELATIVE_DIR +
               "\">here</a> and run <b>HDK_Bootloader_Drivers.exe</b>."
               "<br><br>"
               "To proceed, click OK. You will be prompted to select the new firmware.");
@@ -288,16 +290,32 @@ void MainWindow::on_updateFWButton_clicked() {
     return;
   }
 
+  int result;
+
   // Set bootloader mode
   FirmwareUpdateProgressDialog dialog;
   dialog.show();
   dialog.setText("Setting bootloader mode...");
   sendCommandNoResult("#?b1948\n");
-  dialog.setText(dialog.getText() + "<b>done</b>.<br>");
+
+  // Wait for Atmel device to appear
+  launchProcess(ATMEL_DETECTOR_NAME, E_PM_RELATIVE, QStringList(), E_LM_SYNCHRONOUS, &result);
+  switch (result) {
+    case 0:
+      dialog.setText(dialog.getText() + "<b>done</b>.<br>");
+      break;
+
+    case 1:
+      dialog.close();
+      QMessageBox::critical(this, QString("Unable To Update Firmware"),
+                            QString("Unable to detect an HDK in bootloader mode. "
+                                    "Please ensure that your HDK is connected according to the manual and try again."));
+      return;
+  }
 
   // Erase firmware
   dialog.setText(dialog.getText() + "Erasing existing firmware...");
-  int result = atmel_erase();
+  result = atmel_erase();
   if (result == DFU_PROGRAMMER_MISSING) {
       dialog.close();
       QMessageBox::critical(this, QString("Unable To Update Firmware"),
@@ -803,7 +821,7 @@ int MainWindow::atmel_erase() {
   args << "atxmega256a3bu"
        << "erase";
   int return_code;
-  if (launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING) {
+  if (launchProcess(DFU_PROGRAMMER_NAME, E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS) == E_LR_MISSING) {
       return DFU_PROGRAMMER_MISSING;
   }
   return return_code;
@@ -814,7 +832,7 @@ int MainWindow::atmel_load(QString fwFile) {
   args << "atxmega256a3bu"
        << "flash" << fwFile;
   int return_code;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
+  launchProcess(DFU_PROGRAMMER_NAME, E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
   return return_code;
 }
 
@@ -823,7 +841,7 @@ int MainWindow::atmel_launch() {
   args << "atxmega256a3bu"
        << "launch";
   int return_code;
-  launchProcess("dfu-programmer.exe", E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
+  launchProcess(DFU_PROGRAMMER_NAME, E_PM_RELATIVE, args, E_LM_SYNCHRONOUS, &return_code, DFU_PROGRAMMER_TIMEOUT_MS);
   QThread::sleep(3);
   return return_code;
 }
@@ -833,7 +851,7 @@ int MainWindow::atmel_launch() {
 void MainWindow::detectGPUType() {
     QProcess *process = new QProcess(this);
     connect(process, SIGNAL(finished(int)), process, SLOT(deleteLater()));
-    process->start("GPUTypeDetector.exe");
+    process->start(GPU_TYPE_DETECTOR_NAME);
 
     if (!process->waitForStarted()) {
         return;

@@ -69,9 +69,15 @@ private slots:
 private:
   Ui::MainWindow *ui;
 
-  static const QString RELATIVE_BIN_DIR, RELATIVE_DFU_PROGRAMMER_DIR,
-                       POST_FW_UPDATE_STR, FW_UPDATE_FAIL_STR;
-  static const bool DEBUG_VERBOSE;
+  static const QString RELATIVE_BIN_DIR,
+                       DFU_PROGRAMMER_RELATIVE_DIR,
+                       DFU_PROGRAMMER_NAME,
+                       GPU_TYPE_DETECTOR_NAME,
+                       ATMEL_DETECTOR_NAME,
+                       POST_FW_UPDATE_STR,
+                       FW_UPDATE_FAIL_STR;
+
+  static const bool DEBUG_VERBOSE = false;
   static const int DFU_PROGRAMMER_MISSING = -646675,
                    DFU_PROGRAMMER_TIMEOUT_MS = 15000,
                    PORT_KNOCK_SLEEP_MS = 200,
