@@ -309,7 +309,10 @@ void MainWindow::on_updateFWButton_clicked() {
       dialog.close();
       QMessageBox::critical(this, QString("Unable To Update Firmware"),
                             QString("Unable to detect an HDK in bootloader mode. "
-                                    "Please ensure that your HDK is connected according to the manual and try again."));
+                                    "Please ensure that you have installed <b>HDK_Bootloader_Drivers.exe</b> from "
+                                    "<a href=\"file:///" +
+                                    QCoreApplication::applicationDirPath() + DFU_PROGRAMMER_RELATIVE_DIR +
+                                    "\">here</a> and that your HDK is connected according to the manual, then try again."));
       return;
   }
 
