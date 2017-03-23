@@ -375,6 +375,11 @@ void MainWindow::on_updateFWButton_clicked() {
   dialog.exec();
 }
 
+void MainWindow::on_cameraFWUpdateButton_clicked()
+{
+    launchProcess("OSVR IR Camera Firmware update(5SF006N2_v0007).exe");
+}
+
 // Display --------------------------------------------------------------------
 
 void MainWindow::on_recenterButton_clicked() {
@@ -996,3 +1001,4 @@ void MainWindow::saveConfigFile(QString filename) {
   out_file << styledWriter.write(json);
   out_file.close();
 }
+

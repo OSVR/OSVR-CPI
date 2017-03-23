@@ -66,6 +66,8 @@ private slots:
   void on_screenPersistenceMedium_clicked();
   void on_screenPersistenceLow_clicked();
 
+  void on_cameraFWUpdateButton_clicked();
+
 private:
   Ui::MainWindow *ui;
 
