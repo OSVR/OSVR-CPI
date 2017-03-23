@@ -116,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent)
       QString(programPath + "/OSVR/osvr_user_settings.json");
   loadConfigFile(m_osvrUserConfigFilename);
 
-  detectGPUType();
+  // detectGPUType();
 }
 
 MainWindow::~MainWindow() { delete ui; }
